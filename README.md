@@ -16,6 +16,25 @@ curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/ma
 
 ---
 
+## 🌐 Install Brave Origin di Fedora
+
+Untuk menginstall **Brave Origin** (minimalist standalone edition):
+
+```bash
+# 1-Line Installer Resmi Brave Origin:
+curl -fsS https://dl.brave.com/install.sh | FLAVOR=origin sh
+```
+
+*Atau via DNF Repository:*
+```bash
+sudo dnf config-manager addrepo --from-repofile=https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+sudo dnf install -y brave-origin
+```
+
+*(Untuk channel Nightly: `curl -fsS https://dl.brave.com/install.sh | FLAVOR=origin CHANNEL=nightly sh` atau `sudo dnf install -y brave-origin-nightly`)*
+
+---
+
 ## 🔄 Instant Force Apply & Reload (Live Session)
 
 Jalankan perintah ini untuk membersihkan cache dan me-reload tampilan secara langsung:
@@ -29,8 +48,8 @@ rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/
 ## 🖥️ Layout & Aesthetics
 
 1. **Single Top Bar:** Bar ramping (26px) di bagian atas layar untuk App Launcher, Workspaces, Active Window Title, Clock, Media, Volume, dan Quick Settings Control Center.
-2. **Windows & Theme:** Catppuccin Mocha Dark theme, borderless active windows, sudut membulat 12px, soft shadows, dan spring physics animations.
-3. **Pure Tiling:** Tanpa bottom dock untuk memaksimalkan ruang kerja layar tiling.
+2. **Windows & Theme:** Catppuccin Mocha Dark theme, borderless active windows, window gaps 5px, sudut membulat 10px, soft shadows, dan spring physics animations.
+3. **Pure Tiling:** Tanpa bottom dock untuk efisiensi ruang layar.
 
 ---
 
@@ -39,7 +58,7 @@ rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/
 | Shortcut | Action |
 |---|---|
 | `Mod + Return` | Launch Terminal (**Alacritty**) |
-| `Mod + B` | Launch Browser (**Firefox**) |
+| `Mod + B` | Launch Browser (**Brave Origin / Firefox**) |
 | `Mod + E` | Launch File Manager (**Yazi**) |
 | `Mod + Space` / `Mod + Ctrl + Return` | App Launcher (Noctalia) |
 | `Mod + S` | Control Center (Quick Settings) |
