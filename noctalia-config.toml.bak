@@ -1,15 +1,15 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - CLEAN MACOS / CACHYOS MINIMAL
+# NOCTALIA SHELL V5 - TOKYO-NIGHT / CATPPUCCIN SLIM THEME
 # ==============================================================================
 
 [theme]
 mode              = "dark"
 source            = "builtin"
-builtin           = "Catppuccin"
+builtin           = "Tokyo-Night"
 pure_black_dark   = false
 
 [shell]
-corner_radius_scale   = 0.8
+corner_radius_scale   = 0.7
 button_borders        = false
 input_borders         = true
 popup_borders         = true
@@ -27,7 +27,7 @@ settings_window_translucent = true
 
 [shell.animation]
 enabled = true
-speed   = 1.1
+speed   = 1.2
 
 [shell.shadow]
 direction = "down"
@@ -69,7 +69,7 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# TOP BAR (Clean macOS Style - 26px)
+# SINGLE TOP BAR CONFIGURATION (Ultra-Slim 24px)
 # ==============================================================================
 
 [bar.default]
@@ -78,7 +78,7 @@ enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 26
+thickness          = 24
 background_opacity = 0.85
 border_width       = 0.0
 shadow             = false
@@ -88,11 +88,12 @@ radius             = 0
 margin_ends        = 0
 margin_edge        = 0
 padding            = 8
-widget_spacing     = 6
+widget_spacing     = 5
 hover_highlight    = true
-scale              = 0.9
+scale              = 0.88
+font_scale         = 0.88
 
-# Widget Placement
+# Compact Widget Layout
 start  = ["launcher", "workspaces", "active_window"]
 center = ["clock"]
 end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
@@ -102,33 +103,3 @@ left   = "panel-toggle launcher"
 right  = "panel-toggle control-center"
 scroll_up   = "volume-up"
 scroll_down = "volume-down"
-
-# ==============================================================================
-# BOTTOM DOCK (macOS Style Magnification)
-# ==============================================================================
-
-[dock]
-enabled             = true
-position            = "bottom"
-icon_size           = 42
-item_spacing        = 6
-main_axis_padding   = 12
-cross_axis_padding  = 6
-background_opacity  = 0.85
-border_width        = 0.0
-shadow              = true
-radius              = 14
-margin_edge         = 6
-margin_ends         = 0
-show_running        = true
-auto_hide           = false
-smart_auto_hide     = false
-reserve_space       = true
-layer               = "top"
-active_scale        = 1.0
-inactive_scale      = 0.88
-magnification       = true
-magnification_scale = 1.35
-show_instance_count = true
-show_dots           = true
-pinned              = ["alacritty", "firefox", "nautilus", "code"]
