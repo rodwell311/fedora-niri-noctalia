@@ -1,12 +1,12 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - ULTRA-SLIM & MINIMALIST
+# NOCTALIA SHELL CONFIGURATION (Clean & Minimalist - Single Bar)
 # ==============================================================================
 
 [theme]
 mode = "dark"
 
 [shell]
-corner_radius_scale   = 0.7
+corner_radius_scale   = 0.8
 button_borders        = false
 input_borders         = true
 popup_borders         = true
@@ -17,18 +17,14 @@ time_format           = "{:%H:%M}"
 date_format           = "%A, %d %B"
 polkit_agent          = true
 clipboard_enabled     = true
-clipboard_history_max_entries = 150
+clipboard_history_max_entries = 100
 setup_wizard_enabled  = false
 settings_show_advanced = true
 settings_window_translucent = true
 
 [shell.animation]
 enabled = true
-speed   = 1.2
-
-[shell.shadow]
-direction = "down"
-alpha     = 0.3
+speed   = 1.0
 
 [shell.panel]
 transparency_mode     = "soft"
@@ -45,12 +41,11 @@ polkit_placement      = "floating"
 launcher_position     = "center"
 clipboard_position    = "center"
 polkit_position       = "center"
-floating_offset       = 4
 
 [shell.launcher]
 categories      = true
 show_icons      = true
-compact         = true
+compact         = false
 app_grid        = false
 sort_by_usage   = true
 show_app_origin_indicator = true
@@ -66,62 +61,37 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# TOP BAR CONFIGURATION (Ultra-Slim 24px Bar)
+# SINGLE TOP BAR (Slim 26px)
 # ==============================================================================
 
-[bar]
-order = ["main"]
-
-[bar.main]
+[bar.default]
 position           = "top"
 enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 24
+thickness          = 26
 background_opacity = 0.85
+border_width       = 0.0
 shadow             = false
 contact_shadow     = false
 panel_overlap      = 0
 radius             = 0
 margin_ends        = 0
 margin_edge        = 0
-padding            = 6
-widget_spacing     = 4
+padding            = 8
+widget_spacing     = 6
 hover_highlight    = true
-scale              = 0.85
-font_scale         = 0.85
+scale              = 0.9
+font_scale         = 0.9
 
-# Compact Capsule Design
-capsule            = true
-capsule_fill       = "surface_variant"
-capsule_thickness  = 0.85
-capsule_radius     = 4.0
-capsule_opacity    = 0.6
-
-# Widgets Layout
+# Widget Placement
 start  = ["launcher", "workspaces", "active_window"]
 center = ["clock"]
 end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
 
-[bar.main.dead_zone.actions]
+[bar.default.dead_zone.actions]
 left   = "panel-toggle launcher"
 right  = "panel-toggle control-center"
 scroll_up   = "volume-up"
 scroll_down = "volume-down"
-
-# Fallback alias for default
-[bar.default]
-position           = "top"
-enabled            = true
-thickness          = 24
-background_opacity = 0.85
-radius             = 0
-margin_ends        = 0
-margin_edge        = 0
-padding            = 6
-scale              = 0.85
-font_scale         = 0.85
-start  = ["launcher", "workspaces", "active_window"]
-center = ["clock"]
-end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
