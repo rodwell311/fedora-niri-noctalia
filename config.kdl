@@ -296,8 +296,8 @@ binds {
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
 
-    // Emergency & Quit
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    // Emergency Inhibit
+    Ctrl+Alt+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Ctrl+Alt+Delete { quit; }
     Mod+Shift+E { quit; }
     Mod+Shift+P { power-off-monitors; }
