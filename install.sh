@@ -109,7 +109,32 @@ log_info "Deploying CachyOS/anxi0uz Niri configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 
-# 6. Configure Greetd + Noctalia Greeter
+# 6. Configure Standard User Directories & GIO Icons
+log_info "Setting up XDG user directories and icons..."
+mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Public" "$HOME/Templates" "$HOME/Videos"
+
+printf "%s\n" \
+    "XDG_DESKTOP_DIR=\"\$HOME/Desktop\"" \
+    "XDG_DOWNLOAD_DIR=\"\$HOME/Downloads\"" \
+    "XDG_TEMPLATES_DIR=\"\$HOME/Templates\"" \
+    "XDG_PUBLICSHARE_DIR=\"\$HOME/Public\"" \
+    "XDG_DOCUMENTS_DIR=\"\$HOME/Documents\"" \
+    "XDG_MUSIC_DIR=\"\$HOME/Music\"" \
+    "XDG_PICTURES_DIR=\"\$HOME/Pictures\"" \
+    "XDG_VIDEOS_DIR=\"\$HOME/Videos\"" > "$HOME/.config/user-dirs.dirs"
+
+if command -v gio &>/dev/null; then
+    gio set -t stringv "$HOME/Documents" metadata::custom-icon "folder-documents" 2>/dev/null || true
+    gio set -t stringv "$HOME/Downloads" metadata::custom-icon "folder-download" 2>/dev/null || true
+    gio set -t stringv "$HOME/Music" metadata::custom-icon "folder-music" 2>/dev/null || true
+    gio set -t stringv "$HOME/Pictures" metadata::custom-icon "folder-pictures" 2>/dev/null || true
+    gio set -t stringv "$HOME/Videos" metadata::custom-icon "folder-videos" 2>/dev/null || true
+    gio set -t stringv "$HOME/Templates" metadata::custom-icon "folder-templates" 2>/dev/null || true
+    gio set -t stringv "$HOME/Public" metadata::custom-icon "folder-publicshare" 2>/dev/null || true
+    gio set -t stringv "$HOME/Desktop" metadata::custom-icon "user-desktop" 2>/dev/null || true
+fi
+
+# 7. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
