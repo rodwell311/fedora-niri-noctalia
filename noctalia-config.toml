@@ -1,5 +1,5 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - CLEAN MACOS / CACHYOS MINIMAL
+# NOCTALIA SHELL V5 - CLEAN MINIMALIST (TOP BAR ONLY)
 # ==============================================================================
 
 [theme]
@@ -69,7 +69,7 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# TOP BAR (Clean macOS Style - 26px)
+# SINGLE TOP BAR (Clean Slim 26px)
 # ==============================================================================
 
 [bar.default]
@@ -104,31 +104,8 @@ scroll_up   = "volume-up"
 scroll_down = "volume-down"
 
 # ==============================================================================
-# BOTTOM DOCK (macOS Style Magnification)
+# DOCK (DISABLED)
 # ==============================================================================
 
 [dock]
-enabled             = true
-position            = "bottom"
-icon_size           = 42
-item_spacing        = 6
-main_axis_padding   = 12
-cross_axis_padding  = 6
-background_opacity  = 0.85
-border_width        = 0.0
-shadow              = true
-radius              = 14
-margin_edge         = 6
-margin_ends         = 0
-show_running        = true
-auto_hide           = false
-smart_auto_hide     = false
-reserve_space       = true
-layer               = "top"
-active_scale        = 1.0
-inactive_scale      = 0.88
-magnification       = true
-magnification_scale = 1.35
-show_instance_count = true
-show_dots           = true
-pinned              = ["alacritty", "firefox", "nautilus", "code"]
+enabled = false
