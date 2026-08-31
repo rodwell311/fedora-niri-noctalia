@@ -38,14 +38,19 @@ enable_copr() {
     fi
 }
 
-# 1. Enable Required COPR Repositories
-# - yalter/niri: Official Niri upstream repository on Fedora
-# - lionheartp/Hyprland: Noctalia shell and Noctalia greeter packages
-enable_copr "yalter/niri"
-enable_copr "lionheartp/Hyprland"
+# 1. Setup Repositories based on Fedora Version
+if [ "$FEDORA_VERSION" -ge 44 ] 2>/dev/null; then
+    log_info "Fedora 44+ detected: 'niri' and 'noctalia' are available in official Fedora repos."
+    # Only enable lionheartp for noctalia-greeter
+    enable_copr "lionheartp/Hyprland"
+else
+    log_info "Fedora < 44 detected: enabling upstream Copr repositories..."
+    enable_copr "yalter/niri"
+    enable_copr "lionheartp/Hyprland"
+fi
 
-# 2. Install Niri, Noctalia, Greeter, and Portal dependencies
-log_info "Installing packages (niri, noctalia, noctalia-greeter, greetd, etc.)..."
+# 2. Install Packages
+log_info "Installing Niri, Noctalia, Greeter, and required components..."
 sudo dnf install -y \
     niri \
     greetd \
@@ -54,11 +59,11 @@ sudo dnf install -y \
     polkit-gnome \
     foot
 
-# Install noctalia & greeter
-sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || \
+# Install Noctalia & Greeter packages
 sudo dnf install -y noctalia noctalia-greeter 2>/dev/null || \
-sudo dnf install -y noctalia-git || \
-sudo dnf install -y noctalia
+sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || \
+sudo dnf install -y noctalia || \
+sudo dnf install -y noctalia-git
 
 # 3. Configure Niri (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
@@ -122,19 +127,16 @@ if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-gre
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
     
-    # Ensure state directory exists with proper permissions
     sudo mkdir -p /var/lib/noctalia-greeter
     if id "greeter" &>/dev/null; then
         sudo chown -R greeter:greeter /var/lib/noctalia-greeter
     fi
 
-    # Backup existing greetd config if any
     sudo mkdir -p /etc/greetd
     if [ -f /etc/greetd/config.toml ]; then
         sudo cp /etc/greetd/config.toml /etc/greetd/config.toml.bak
     fi
 
-    # Write greetd configuration
     sudo tee /etc/greetd/config.toml > /dev/null << EOF
 [terminal]
 vt = 1
@@ -145,10 +147,8 @@ user = "greeter"
 EOF
     log_success "Greetd configured to use Noctalia Greeter (${GREETER_BIN})"
 
-    # Enable accounts service for user avatars
     sudo systemctl enable accounts-daemon.service 2>/dev/null || true
 
-    # Enable greetd service
     log_info "Enabling greetd service (disabling existing display managers if needed)..."
     for dm in gdm sddm lightdm; do
         if systemctl is-enabled --quiet $dm.service 2>/dev/null; then
