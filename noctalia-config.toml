@@ -1,0 +1,105 @@
+# ==============================================================================
+# NOCTALIA SHELL V5 - MODERN MINIMALIST / FROSTED GLASS THEME
+# ==============================================================================
+
+[theme]
+mode = "dark"
+
+[shell]
+corner_radius_scale   = 1.0
+button_borders        = true
+input_borders         = true
+popup_borders         = true
+card_borders          = true
+popup_shadows         = true
+font_family           = "Noto Sans"
+time_format           = "{:%H:%M}"
+date_format           = "%A, %d %B"
+polkit_agent          = true
+clipboard_enabled     = true
+clipboard_history_max_entries = 150
+setup_wizard_enabled  = false
+settings_show_advanced = true
+settings_window_translucent = true
+
+[shell.animation]
+enabled = true
+speed   = 1.2
+
+[shell.shadow]
+direction = "down"
+alpha     = 0.45
+
+[shell.panel]
+transparency_mode     = "soft"
+borders               = true
+shadow                = true
+list_item_background  = true
+floating_layer        = "overlay"
+launcher_placement    = "floating"
+clipboard_placement   = "floating"
+control_center_placement = "attached"
+wallpaper_placement   = "attached"
+session_placement     = "attached"
+polkit_placement      = "floating"
+launcher_position     = "center"
+clipboard_position    = "center"
+polkit_position       = "center"
+floating_offset       = 10
+
+[shell.launcher]
+categories      = true
+show_icons      = true
+compact         = false
+app_grid        = false
+sort_by_usage   = true
+show_app_origin_indicator = true
+
+[shell.launcher.providers.calculator]
+prefix = "calc"
+global = true
+
+[shell.launcher.providers.emoji]
+prefix = "emo"
+
+[shell.greeter_sync]
+auto_sync = true
+
+# ==============================================================================
+# TOP BAR CONFIGURATION (Floating Pill / Capsule Style)
+# ==============================================================================
+
+[bar.default]
+position           = "top"
+enabled            = true
+auto_hide          = false
+reserve_space      = true
+layer              = "top"
+thickness          = 36
+background_opacity = 0.85
+shadow             = true
+contact_shadow     = true
+panel_overlap      = 1
+radius             = 14
+margin_ends        = 14
+margin_edge        = 8
+padding            = 12
+widget_spacing     = 6
+hover_highlight    = true
+
+# Capsule Pill Design
+capsule            = true
+capsule_fill       = "surface_variant"
+capsule_thickness  = 0.82
+capsule_opacity    = 0.75
+
+# Widgets Layout
+start  = ["launcher", "workspaces", "active_window"]
+center = ["clock", "weather"]
+end    = ["media", "tray", "volume", "brightness", "network", "bluetooth", "battery", "control-center", "session"]
+
+[bar.default.dead_zone.actions]
+left   = "panel-toggle launcher"
+right  = "panel-toggle control-center"
+scroll_up   = "volume-up"
+scroll_down = "volume-down"

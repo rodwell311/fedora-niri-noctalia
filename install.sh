@@ -77,22 +77,18 @@ sudo dnf install -y --skip-unavailable noctalia-git noctalia-greeter 2>/dev/null
 sudo dnf install -y --skip-unavailable noctalia || \
 sudo dnf install -y --skip-unavailable noctalia-git
 
-# 3. Configure Noctalia Shell (~/.config/noctalia/config.toml)
+# 3. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
 NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
 mkdir -p "$NOCTALIA_DIR"
 
-if [ ! -f "$NOCTALIA_CONF" ]; then
-    log_info "Enabling Noctalia native polkit authentication agent..."
-    cat << 'EOF' > "$NOCTALIA_CONF"
-[shell]
-polkit_agent = true
-EOF
-else
-    if ! grep -q "polkit_agent" "$NOCTALIA_CONF"; then
-        sed -i '/\[shell\]/a polkit_agent = true' "$NOCTALIA_CONF" 2>/dev/null || echo -e "\n[shell]\npolkit_agent = true" >> "$NOCTALIA_CONF"
-    fi
+if [ -f "$NOCTALIA_CONF" ]; then
+    cp "$NOCTALIA_CONF" "$NOCTALIA_CONF.bak.$(date +%s)"
 fi
+
+log_info "Deploying modern Frosted-Glass Noctalia configuration..."
+curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml -o "$NOCTALIA_CONF"
+log_success "Curated Noctalia config.toml deployed."
 
 # 4. Deploy Curated Niri Config (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
@@ -101,12 +97,11 @@ mkdir -p "$CONFIG_DIR"
 
 if [ -f "$CONFIG_FILE" ]; then
     cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%s)"
-    log_info "Existing config backed up to $CONFIG_FILE.bak"
 fi
 
-log_info "Deploying modern macOS-styled Niri + Noctalia configuration..."
+log_info "Deploying modern macOS-styled Niri configuration..."
 curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl -o "$CONFIG_FILE"
-log_success "Curated config.kdl deployed."
+log_success "Curated Niri config.kdl deployed."
 
 # 5. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
