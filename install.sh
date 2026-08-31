@@ -151,7 +151,18 @@ else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 7. Verification & Live Restart
+# 7. Polkit Rule for NetworkManager (Allow Wi-Fi scanning & control without password prompts)
+log_info "Configuring Polkit rule for NetworkManager..."
+sudo tee /etc/polkit-1/rules.d/50-networkmanager.rules > /dev/null << 'EOF'
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.NetworkManager.") == 0 && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+log_success "Polkit NetworkManager rule created."
+
+# 8. Verification & Live Restart
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
