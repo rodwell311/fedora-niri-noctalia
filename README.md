@@ -65,7 +65,7 @@ rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/
 | `Mod + S` | Control Center (Quick Settings) |
 | `Mod + Shift + S` | Noctalia Settings |
 | `Mod + Shift + Return` | Wallpaper Selector |
-| `Mod + Shift + Q` | Power / Session Menu |
+| `Mod + Escape` / `Mod + Shift + Q` | Power / Session Menu |
 | `Mod + Alt + L` | Lock Screen |
 | `Mod + Q` | Close Active Window |
 | `Mod + T` | Toggle Floating Window |
