@@ -97,7 +97,7 @@ format = "{:%d %b  %H:%M}"
 tooltip_format = "{:%A, %d %B %Y}"
 
 # ==============================================================================
-# SINGLE TOP BAR
+# SINGLE TOP BAR (Spacious & Clean Layout)
 # ==============================================================================
 
 [bar.default]
@@ -106,7 +106,7 @@ enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 26
+thickness          = 32
 background_opacity = 0.85
 border_width       = 0.0
 shadow             = false
@@ -115,10 +115,17 @@ panel_overlap      = 0
 radius             = 0
 margin_ends        = 0
 margin_edge        = 0
-padding            = 8
-widget_spacing     = 6
+padding            = 14
+widget_spacing     = 14
 hover_highlight    = true
-scale              = 0.9
+scale              = 0.95
+
+# Widget Capsules (Subtle Pill separation)
+capsule            = true
+capsule_fill       = "surface_variant"
+capsule_thickness  = 0.78
+capsule_radius     = 6.0
+capsule_opacity    = 0.65
 
 start  = ["fedora-logo", "workspaces", "active_window"]
 center = ["media"]
