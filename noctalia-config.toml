@@ -1,12 +1,15 @@
 # ==============================================================================
-# NOCTALIA SHELL CONFIGURATION (Clean & Minimalist - Single Bar)
+# NOCTALIA SHELL V5 - TOKYO-NIGHT / CATPPUCCIN SLIM THEME
 # ==============================================================================
 
 [theme]
-mode = "dark"
+mode              = "dark"
+source            = "builtin"
+builtin           = "Tokyo-Night"
+pure_black_dark   = false
 
 [shell]
-corner_radius_scale   = 0.8
+corner_radius_scale   = 0.7
 button_borders        = false
 input_borders         = true
 popup_borders         = true
@@ -24,7 +27,11 @@ settings_window_translucent = true
 
 [shell.animation]
 enabled = true
-speed   = 1.0
+speed   = 1.2
+
+[shell.shadow]
+direction = "down"
+alpha     = 0.35
 
 [shell.panel]
 transparency_mode     = "soft"
@@ -41,6 +48,7 @@ polkit_placement      = "floating"
 launcher_position     = "center"
 clipboard_position    = "center"
 polkit_position       = "center"
+floating_offset       = 4
 
 [shell.launcher]
 categories      = true
@@ -61,7 +69,7 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# SINGLE TOP BAR (Slim 26px)
+# SINGLE TOP BAR CONFIGURATION (Ultra-Slim 24px)
 # ==============================================================================
 
 [bar.default]
@@ -70,7 +78,7 @@ enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 26
+thickness          = 24
 background_opacity = 0.85
 border_width       = 0.0
 shadow             = false
@@ -80,12 +88,12 @@ radius             = 0
 margin_ends        = 0
 margin_edge        = 0
 padding            = 8
-widget_spacing     = 6
+widget_spacing     = 5
 hover_highlight    = true
-scale              = 0.9
-font_scale         = 0.9
+scale              = 0.88
+font_scale         = 0.88
 
-# Widget Placement
+# Compact Widget Layout
 start  = ["launcher", "workspaces", "active_window"]
 center = ["clock"]
 end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]

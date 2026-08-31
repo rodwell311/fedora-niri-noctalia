@@ -2,7 +2,7 @@
 
 Automated installer for **Niri** (scrollable-tiling Wayland compositor), **Noctalia** (native Wayland desktop shell v5), and **Noctalia Greeter** (`greetd` login screen) on Fedora Linux.
 
-Curated preset adopting the sleek, minimal **CachyOS / anxi0uz** dotfiles style.
+Curated preset adopting the sleek, minimal **CachyOS / anxi0uz** dotfiles style with **Tokyo-Night / Catppuccin** color theme.
 
 ---
 
@@ -16,12 +16,12 @@ curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/ma
 
 ---
 
-## 🔄 Instant Update / Apply Config (Live Session)
+## 🔄 Instant Force Apply & Reload (Live Session)
 
-Jalankan perintah ini jika sudah di dalam session Niri untuk langsung menerapkan konfigurasi terbaru tanpa reboot:
+Jalankan perintah satu baris ini untuk membersihkan cache state dan me-reload Noctalia & Niri secara paksa:
 
 ```bash
-rm -f ~/.local/state/noctalia/settings.toml && curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/install.sh?$(date +%s)" | bash && noctalia msg restart 2>/dev/null; niri msg action reload-config 2>/dev/null
+rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/install.sh?$(date +%s)" | bash && killall -9 noctalia 2>/dev/null; nohup noctalia >/dev/null 2>&1 & niri msg action reload-config 2>/dev/null
 ```
 
 ---
@@ -48,12 +48,3 @@ rm -f ~/.local/state/noctalia/settings.toml && curl -fsSL "https://raw.githubuse
 | `Mod + 1 .. 9` | Focus Workspace 1 – 9 |
 | `Mod + Ctrl + 1 .. 9` | Move Column to Workspace 1 – 9 |
 | `Mod + Shift + E` / `Ctrl + Alt + Del` | Quit Niri |
-
----
-
-## 🎨 Aesthetics & Layout
-
-* **Top Bar:** Single ultra-slim bar (26px) dengan widget lengkap (Workspaces, Active Window, Clock, Media, Volume, Brightness, Network, Battery, Control Center).
-* **Windows:** Clean borderless (tanpa focus ring yang mengganggu), sudut 10px (`geometry-corner-radius 10`), dan transparent backdrop layout.
-* **Blur & Effects:** Wayland native blur aktif untuk panels, window switcher, dan overview.
-* **Login Manager:** Greetd + Noctalia Greeter dengan auto-sync wallpaper dan warna tema.

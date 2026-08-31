@@ -90,9 +90,10 @@ NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
 mkdir -p "$NOCTALIA_DIR"
 
-rm -f "$HOME/.local/state/noctalia/settings.toml" 2>/dev/null || true
+# Clear entire cached GUI state overrides
+rm -rf "$HOME/.local/state/noctalia" 2>/dev/null || true
 
-log_info "Deploying CachyOS-styled Noctalia configuration..."
+log_info "Deploying Tokyo-Night Noctalia configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml?$(date +%s)" -o "$NOCTALIA_CONF"
 log_success "Curated Noctalia config.toml deployed."
 
@@ -150,13 +151,14 @@ else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 7. Verification & Live Reload
+# 7. Verification & Live Restart
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
 
 if [ -n "$WAYLAND_DISPLAY" ]; then
-    noctalia msg restart 2>/dev/null || true
+    killall -9 noctalia 2>/dev/null || pkill -x noctalia 2>/dev/null || true
+    nohup noctalia >/dev/null 2>&1 &
     niri msg action reload-config 2>/dev/null || true
 fi
 
