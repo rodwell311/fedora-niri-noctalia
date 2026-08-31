@@ -1,5 +1,5 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - CLEAN MINIMALIST (TOP BAR ONLY)
+# NOCTALIA SHELL V5 - CUSTOM TOP BAR CONFIGURATION
 # ==============================================================================
 
 [theme]
@@ -50,26 +50,54 @@ clipboard_position    = "center"
 polkit_position       = "center"
 floating_offset       = 4
 
-[shell.launcher]
-categories      = true
-show_icons      = true
-compact         = false
-app_grid        = false
-sort_by_usage   = true
-show_app_origin_indicator = true
-
-[shell.launcher.providers.calculator]
-prefix = "calc"
-global = true
-
-[shell.launcher.providers.emoji]
-prefix = "emo"
-
-[shell.greeter_sync]
-auto_sync = true
+[system.monitor]
+enabled = true
+network_poll_seconds = 1.0
 
 # ==============================================================================
-# SINGLE TOP BAR (Clean Slim 26px)
+# WIDGET DEFINITIONS
+# ==============================================================================
+
+[widget.fedora-logo]
+type = "custom_button"
+custom_image = "/home/rodwell/.config/noctalia/icons/fedora.svg"
+custom_image_colorize = true
+tooltip = "Fedora Linux (Power / Session Menu)"
+
+[widget.fedora-logo.actions]
+left = "panel-toggle session"
+right = "settings-toggle"
+
+[widget.media]
+hide_when_no_media = true
+artist_first = true
+art_size     = 18
+
+[widget.network]
+show_label = false
+vpn_status = "replace"
+
+[widget.net-speed-down]
+type = "sysmon"
+stat = "net_rx"
+visualization = "none"
+show_value = true
+show_glyph = true
+network_speed_unit = "auto"
+network_speed_compact = true
+
+[widget.tray]
+drawer = true
+drawer_columns = 3
+drawer_item_size = 20
+hide_passive = true
+
+[widget.clock]
+format = "{:%d %b  %H:%M}"
+tooltip_format = "{:%A, %d %B %Y}"
+
+# ==============================================================================
+# SINGLE TOP BAR
 # ==============================================================================
 
 [bar.default]
@@ -92,20 +120,15 @@ widget_spacing     = 6
 hover_highlight    = true
 scale              = 0.9
 
-# Widget Placement
-start  = ["launcher", "workspaces", "active_window"]
-center = ["clock"]
-end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
+start  = ["workspaces", "active_window"]
+center = ["media"]
+end    = ["tray", "network", "net-speed-down", "volume", "brightness", "control-center", "clock", "fedora-logo"]
 
 [bar.default.dead_zone.actions]
 left   = "panel-toggle launcher"
 right  = "panel-toggle control-center"
 scroll_up   = "volume-up"
 scroll_down = "volume-down"
-
-# ==============================================================================
-# DOCK (DISABLED)
-# ==============================================================================
 
 [dock]
 enabled = false
