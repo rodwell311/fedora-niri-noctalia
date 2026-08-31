@@ -34,7 +34,7 @@ input {
 }
 
 layout {
-    gaps 12
+    gaps 5
     center-focused-column "never"
     background-color "transparent"
 
@@ -102,7 +102,7 @@ animations {
 
 // Window Appearance
 window-rule {
-    geometry-corner-radius 12
+    geometry-corner-radius 10
     clip-to-geometry true
 }
 
