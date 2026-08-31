@@ -94,65 +94,19 @@ else
     fi
 fi
 
-# 4. Configure Niri (~/.config/niri/config.kdl)
+# 4. Deploy Curated Niri Config (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
 CONFIG_FILE="$CONFIG_DIR/config.kdl"
 mkdir -p "$CONFIG_DIR"
 
-# Download complete upstream default config if no full config exists
-if [ ! -f "$CONFIG_FILE" ] || [ $(wc -l < "$CONFIG_FILE" 2>/dev/null || echo 0) -lt 50 ]; then
-    log_info "Fetching full default Niri configuration template..."
-    if [ -f /etc/niri/config.kdl ]; then
-        cp /etc/niri/config.kdl "$CONFIG_FILE"
-    elif [ -f /usr/share/niri/config.kdl ]; then
-        cp /usr/share/niri/config.kdl "$CONFIG_FILE"
-    else
-        curl -fsSL https://raw.githubusercontent.com/YaLTeR/niri/main/resources/default-config.kdl -o "$CONFIG_FILE" || touch "$CONFIG_FILE"
-    fi
-    # Disable default waybar spawn if present
-    sed -i 's/^spawn-at-startup "waybar"/\/\/ spawn-at-startup "waybar"/' "$CONFIG_FILE" 2>/dev/null || true
+if [ -f "$CONFIG_FILE" ]; then
+    cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%s)"
+    log_info "Existing config backed up to $CONFIG_FILE.bak"
 fi
 
-# Inject Noctalia settings if not present
-if ! grep -q 'spawn-at-startup "noctalia"' "$CONFIG_FILE"; then
-    log_info "Injecting Noctalia autostart, bindings, and rules into $CONFIG_FILE..."
-    cat << 'EOF' >> "$CONFIG_FILE"
-
-// --- Noctalia Integration ---
-spawn-at-startup "noctalia"
-
-binds {
-    Mod+Space { spawn-sh "noctalia msg panel-toggle launcher"; }
-    Mod+S { spawn-sh "noctalia msg panel-toggle control-center"; }
-    Mod+Comma { spawn-sh "noctalia msg settings-toggle"; }
-    Alt+Tab { spawn-sh "noctalia msg window-switcher"; }
-
-    XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
-    XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
-    XF86AudioMute { spawn-sh "noctalia msg volume-mute"; }
-    XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
-    XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
-}
-
-window-rule {
-    match app-id="dev.noctalia.Noctalia"
-    open-floating true
-    default-column-width { fixed 1080; }
-    default-window-height { fixed 920; }
-}
-
-layer-rule {
-    match namespace="^noctalia-backdrop"
-    place-within-backdrop true
-}
-
-debug {
-    honor-xdg-activation-with-invalid-serial
-}
-// -----------------------------
-EOF
-    log_success "Noctalia rules appended to config.kdl"
-fi
+log_info "Deploying modern macOS-styled Niri + Noctalia configuration..."
+curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl -o "$CONFIG_FILE"
+log_success "Curated config.kdl deployed."
 
 # 5. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
