@@ -88,10 +88,13 @@ log_success "Alacritty configuration deployed."
 # 4. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
 NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
-mkdir -p "$NOCTALIA_DIR"
+mkdir -p "$NOCTALIA_DIR/palettes"
 
 # Clear entire cached GUI state overrides
 rm -rf "$HOME/.local/state/noctalia" 2>/dev/null || true
+
+log_info "Deploying custom high-contrast Catppuccin palette..."
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/CatppuccinCustom.json?$(date +%s)" -o "$NOCTALIA_DIR/palettes/CatppuccinCustom.json"
 
 log_info "Deploying Tokyo-Night Noctalia configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml?$(date +%s)" -o "$NOCTALIA_CONF"
