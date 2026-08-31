@@ -2,7 +2,7 @@
 
 Automated installer for **Niri** (scrollable-tiling Wayland compositor), **Noctalia** (native Wayland desktop shell v5), and **Noctalia Greeter** (`greetd` login screen) on Fedora Linux.
 
-Curated preset adopting the sleek, minimal **CachyOS / anxi0uz** dotfiles style with **Tokyo-Night / Catppuccin** color theme.
+Curated preset adopting the clean **macOS-like & CachyOS/anxi0uz** style with **Catppuccin / Tokyo-Night** theme + **Native macOS Bottom Dock**.
 
 ---
 
@@ -18,11 +18,19 @@ curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/ma
 
 ## 🔄 Instant Force Apply & Reload (Live Session)
 
-Jalankan perintah satu baris ini untuk membersihkan cache state dan me-reload Noctalia & Niri secara paksa:
+Jalankan perintah ini untuk membersihkan cache dan me-reload tampilan secara langsung:
 
 ```bash
-rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/install.sh?$(date +%s)" | bash && killall -9 noctalia 2>/dev/null; nohup noctalia >/dev/null 2>&1 & niri msg action reload-config 2>/dev/null
+rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/install.sh?$(date +%s)" | bash && noctalia msg config-reload 2>/dev/null; noctalia msg dock-show 2>/dev/null; niri msg action load-config-file 2>/dev/null
 ```
+
+---
+
+## 🖥️ Layout & Aesthetics (macOS-like Clean)
+
+1. **Top Bar:** Single ultra-slim bar (26px) di bagian atas layar untuk App Launcher, Workspaces, Active Window Title, Clock, Media, Volume, dan Quick Settings Control Center.
+2. **Bottom Dock (macOS Style):** Floating bottom dock dengan efek **magnification** (ikon membesar saat di-hover), running app dots, pinned apps (`Alacritty`, `Firefox`, `Nautilus`, `VSCode`), dan background semi-transparan `radius 14px`.
+3. **Windows & Theme:** Catppuccin Mocha Dark theme, borderless active windows, sudut membulat 12px, soft shadows, dan spring physics animations.
 
 ---
 
