@@ -3,6 +3,7 @@ set -e
 
 # ==============================================================================
 # Installer: Niri + Noctalia Shell + Noctalia Greeter on Fedora
+# (Compatible with Fedora Workstation, Silverblue, & Fedora Everything Minimal)
 # ==============================================================================
 
 RED='\033[0;31m'
@@ -40,8 +41,7 @@ enable_copr() {
 
 # 1. Setup Repositories based on Fedora Version
 if [ "$FEDORA_VERSION" -ge 44 ] 2>/dev/null; then
-    log_info "Fedora 44+ detected: 'niri' and 'noctalia' are available in official Fedora repos."
-    # Only enable lionheartp for noctalia-greeter
+    log_info "Fedora 44+ detected: 'niri' and 'noctalia' are in official repos."
     enable_copr "lionheartp/Hyprland"
 else
     log_info "Fedora < 44 detected: enabling upstream Copr repositories..."
@@ -49,15 +49,28 @@ else
     enable_copr "lionheartp/Hyprland"
 fi
 
-# 2. Install Packages
-log_info "Installing Niri, Noctalia, Greeter, and required components..."
+# 2. Install Core System, Fonts, Audio, Portals, and Niri/Noctalia
+log_info "Installing compositor, shell, fonts, and base multimedia stack..."
 sudo dnf install -y \
     niri \
     greetd \
     accountsservice \
+    xdg-desktop-portal \
     xdg-desktop-portal-gnome \
+    xdg-desktop-portal-gtk \
+    polkit \
     polkit-gnome \
-    foot
+    foot \
+    pipewire \
+    wireplumber \
+    pipewire-pulseaudio \
+    pipewire-alsa \
+    brightnessctl \
+    google-noto-sans-fonts \
+    google-noto-color-emoji-fonts \
+    fontawesome-fonts \
+    mesa-dri-drivers \
+    vulkan-loader
 
 # Install Noctalia & Greeter packages
 sudo dnf install -y noctalia noctalia-greeter 2>/dev/null || \
@@ -149,7 +162,7 @@ EOF
 
     sudo systemctl enable accounts-daemon.service 2>/dev/null || true
 
-    log_info "Enabling greetd service (disabling existing display managers if needed)..."
+    log_info "Enabling greetd service..."
     for dm in gdm sddm lightdm; do
         if systemctl is-enabled --quiet $dm.service 2>/dev/null; then
             log_warn "Disabling $dm.service..."
