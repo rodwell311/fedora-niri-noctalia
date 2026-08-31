@@ -1,8 +1,19 @@
 // =============================================================================
-// NIRI CONFIGURATION (CachyOS / anxi0uz Style: Clean, Minimal, Borderless)
+// NIRI CONFIGURATION - FULL CACHYOS / ANXI0UZ SPECIFICATION
 // =============================================================================
 
+// Environment variables
+environment {
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    QT_QPA_PLATFORM "wayland"
+    QT_QPA_PLATFORMTHEME "gtk3"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    XDG_CURRENT_DESKTOP "niri"
+    XDG_SESSION_TYPE "wayland"
+}
+
 prefer-no-csd
+screenshot-path null
 
 input {
     keyboard {
@@ -14,17 +25,16 @@ input {
     touchpad {
         tap
         natural-scroll
-        scroll-method "two-finger"
     }
     mouse {
-        // natural-scroll
+        // accel-profile "flat"
     }
-    warp-mouse-to-focus
-    focus-follows-mouse max-scroll-amount="0%"
+    focus-follows-mouse
+    workspace-auto-back-and-forth
 }
 
 layout {
-    gaps 10
+    gaps 12
     center-focused-column "never"
     background-color "transparent"
 
@@ -56,16 +66,43 @@ layout {
     struts {}
 }
 
-overview {
-    backdrop-color "#11111b80"
-    workspace-shadow {
-        off
+// Spring physics animations (CachyOS exact spec)
+animations {
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+    window-close {
+        duration-ms 200
+        curve "ease-out-cubic"
+    }
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+    config-notification-open-close {
+        spring damping-ratio=0.6 stiffness=1200 epsilon=0.001
+    }
+    screenshot-ui-open {
+        duration-ms 300
+        curve "ease-out-quad"
+    }
+    overview-open-close {
+        spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
     }
 }
 
-// Window Appearance (10px rounded corners)
+// Window Appearance
 window-rule {
-    geometry-corner-radius 10
+    geometry-corner-radius 12
     clip-to-geometry true
 }
 
@@ -76,7 +113,7 @@ window-rule {
     }
 }
 
-// Floating Noctalia Settings
+// Floating rules for Noctalia & Steam & dialogs
 window-rule {
     match app-id="dev.noctalia.Noctalia"
     open-floating true
@@ -93,7 +130,13 @@ window-rule {
     open-floating true
 }
 
-// Noctalia Layer Rules
+window-rule {
+    match app-id="steam"
+    exclude title=r#"^[Ss]team$"#
+    open-floating true
+}
+
+// Layer Shell Rules
 layer-rule {
     match namespace="^noctalia-wallpaper"
     place-within-backdrop true
@@ -120,31 +163,41 @@ layer-rule {
 }
 
 blur {
-    passes 3
+    passes 2
     offset 3.0
-    noise 0.02
-    saturation 1.1
+    noise 0.03
+    saturation 1.0
+}
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+hotkey-overlay {
+    skip-at-startup
 }
 
 // Autostart Noctalia
 spawn-at-startup "noctalia"
 
-// Keybindings (anxi0uz / CachyOS Style)
+// Keybindings
 binds {
-    // Noctalia Integration
-    Mod+Space hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
-    Mod+CTRL+Return hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
-    Mod+S hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
-    Mod+Shift+S hotkey-overlay-title="Settings" { spawn-sh "noctalia msg settings-toggle"; }
-    Mod+Shift+Return hotkey-overlay-title="Wallpaper" { spawn-sh "noctalia msg panel-toggle wallpaper"; }
-    Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }
-    Mod+ALT+L hotkey-overlay-title="Lock Screen" { spawn-sh "noctalia msg session lock"; }
-    Alt+Tab { spawn-sh "noctalia msg window-switcher"; }
+    Mod+Shift+Escape { show-hotkey-overlay; }
 
     // Applications
-    Mod+Return hotkey-overlay-title="Terminal" { spawn "alacritty"; }
-    Mod+B hotkey-overlay-title="Browser" { spawn "firefox"; }
-    Mod+E hotkey-overlay-title="File Manager" { spawn "alacritty" "-e" "yazi"; }
+    Mod+Return hotkey-overlay-title="Open Terminal: Alacritty" { spawn "alacritty"; }
+    Mod+B hotkey-overlay-title="Open Browser: Firefox" { spawn "firefox"; }
+    Mod+E hotkey-overlay-title="File Manager: Yazi" { spawn "alacritty" "-e" "yazi"; }
+
+    // Noctalia Integration
+    Mod+Shift+Return hotkey-overlay-title="Wallpaper Selector" { spawn-sh "noctalia msg panel-toggle wallpaper"; }
+    Mod+S hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
+    Mod+Shift+S hotkey-overlay-title="Settings" { spawn-sh "noctalia msg settings-toggle"; }
+    Mod+Ctrl+Return hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+Space hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn-sh "noctalia msg session lock"; }
+    Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }
+    Alt+Tab { spawn-sh "noctalia msg window-switcher"; }
 
     // Media Controls
     XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "noctalia msg volume-up"; }
@@ -172,14 +225,14 @@ binds {
     Mod+Down  { focus-window-down; }
     Mod+J     { focus-window-down; }
 
-    Mod+CTRL+Left  { move-column-left; }
-    Mod+CTRL+H     { move-column-left; }
-    Mod+CTRL+Right { move-column-right; }
-    Mod+CTRL+L     { move-column-right; }
-    Mod+CTRL+Up    { move-window-up; }
-    Mod+CTRL+K     { move-window-up; }
-    Mod+CTRL+Down  { move-window-down; }
-    Mod+CTRL+J     { move-window-down; }
+    Mod+Ctrl+Left  { move-column-left; }
+    Mod+Ctrl+H     { move-column-left; }
+    Mod+Ctrl+Right { move-column-right; }
+    Mod+Ctrl+L     { move-column-right; }
+    Mod+Ctrl+Up    { move-window-up; }
+    Mod+Ctrl+K     { move-window-up; }
+    Mod+Ctrl+Down  { move-window-down; }
+    Mod+Ctrl+J     { move-window-down; }
 
     Mod+BracketLeft  { consume-or-expel-window-left; }
     Mod+BracketRight { consume-or-expel-window-right; }
@@ -192,9 +245,9 @@ binds {
     Mod+Ctrl+R { reset-window-height; }
 
     // Layout Controls
-    Mod+CTRL+F { expand-column-to-available-width; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
     Mod+C { center-column; }
-    Mod+CTRL+C { center-visible-columns; }
+    Mod+Ctrl+C { center-visible-columns; }
     Mod+Minus { set-column-width "-10%"; }
     Mod+Equal { set-column-width "+10%"; }
     Mod+Shift+Minus { set-window-height "-10%"; }
@@ -219,22 +272,22 @@ binds {
     Mod+8 { focus-workspace 8; }
     Mod+9 { focus-workspace 9; }
 
-    Mod+CTRL+1 { move-column-to-workspace 1; }
-    Mod+CTRL+2 { move-column-to-workspace 2; }
-    Mod+CTRL+3 { move-column-to-workspace 3; }
-    Mod+CTRL+4 { move-column-to-workspace 4; }
-    Mod+CTRL+5 { move-column-to-workspace 5; }
-    Mod+CTRL+6 { move-column-to-workspace 6; }
-    Mod+CTRL+7 { move-column-to-workspace 7; }
-    Mod+CTRL+8 { move-column-to-workspace 8; }
-    Mod+CTRL+9 { move-column-to-workspace 9; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
 
-    Mod+TAB { focus-workspace-previous; }
+    Mod+Tab { focus-workspace-previous; }
 
     Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
     Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
-    Mod+CTRL+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
-    Mod+CTRL+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
 
     // Screenshots
     Print { screenshot; }
@@ -242,13 +295,9 @@ binds {
     Alt+Print { screenshot-window; }
 
     // Emergency & Quit
-    Mod+ESCAPE allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    CTRL+ALT+Delete { quit; }
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Ctrl+Alt+Delete { quit; }
     Mod+Shift+E { quit; }
     Mod+Shift+P { power-off-monitors; }
     Mod+O repeat=false { toggle-overview; }
-}
-
-debug {
-    honor-xdg-activation-with-invalid-serial
 }

@@ -78,33 +78,38 @@ sudo dnf install -y --skip-unavailable noctalia-git noctalia-greeter 2>/dev/null
 sudo dnf install -y --skip-unavailable noctalia || \
 sudo dnf install -y --skip-unavailable noctalia-git
 
-# 3. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
+# 3. Deploy Alacritty Config (~/.config/alacritty/alacritty.toml)
+ALACRITTY_DIR="$HOME/.config/alacritty"
+mkdir -p "$ALACRITTY_DIR"
+log_info "Deploying CachyOS/Catppuccin styled Alacritty configuration..."
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/alacritty.toml?$(date +%s)" -o "$ALACRITTY_DIR/alacritty.toml"
+log_success "Alacritty configuration deployed."
+
+# 4. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
 NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
 mkdir -p "$NOCTALIA_DIR"
 
-# Clean up stale state overrides that block config reloads
 rm -f "$HOME/.local/state/noctalia/settings.toml" 2>/dev/null || true
 
-log_info "Deploying ultra-slim & minimalist Noctalia configuration..."
+log_info "Deploying CachyOS-styled Noctalia configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml?$(date +%s)" -o "$NOCTALIA_CONF"
 log_success "Curated Noctalia config.toml deployed."
 
-# 4. Deploy Curated Niri Config (~/.config/niri/config.kdl)
+# 5. Deploy Curated Niri Config (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
 CONFIG_FILE="$CONFIG_DIR/config.kdl"
 mkdir -p "$CONFIG_DIR"
 
-log_info "Deploying borderless Niri configuration with Alacritty..."
+log_info "Deploying CachyOS/anxi0uz Niri configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 
-# 5. Configure Greetd + Noctalia Greeter
+# 6. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
     
-    # Ensure greeter user exists and belongs to video/input
     if ! id "greeter" &>/dev/null; then
         sudo useradd -r -M -G video,input,render -s /sbin/nologin greeter 2>/dev/null || true
     else
@@ -145,12 +150,11 @@ else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 6. Verification & Live Reload
+# 7. Verification & Live Reload
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
 
-# Trigger live reload if running inside graphical session
 if [ -n "$WAYLAND_DISPLAY" ]; then
     noctalia msg restart 2>/dev/null || true
     niri msg action reload-config 2>/dev/null || true
