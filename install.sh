@@ -51,7 +51,7 @@ fi
 
 # 2. Install Core System, Fonts, Audio, Portals, and Niri/Noctalia
 log_info "Installing compositor, shell, fonts, and base multimedia stack..."
-sudo dnf install -y \
+sudo dnf install -y --skip-unavailable \
     niri \
     greetd \
     accountsservice \
@@ -59,7 +59,7 @@ sudo dnf install -y \
     xdg-desktop-portal-gnome \
     xdg-desktop-portal-gtk \
     polkit \
-    polkit-gnome \
+    mate-polkit \
     foot \
     pipewire \
     wireplumber \
@@ -73,10 +73,10 @@ sudo dnf install -y \
     vulkan-loader
 
 # Install Noctalia & Greeter packages
-sudo dnf install -y noctalia noctalia-greeter 2>/dev/null || \
-sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || \
-sudo dnf install -y noctalia || \
-sudo dnf install -y noctalia-git
+sudo dnf install -y --skip-unavailable noctalia noctalia-greeter 2>/dev/null || \
+sudo dnf install -y --skip-unavailable noctalia-git noctalia-greeter 2>/dev/null || \
+sudo dnf install -y --skip-unavailable noctalia || \
+sudo dnf install -y --skip-unavailable noctalia-git
 
 # 3. Configure Niri (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
