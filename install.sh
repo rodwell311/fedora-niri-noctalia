@@ -59,7 +59,6 @@ sudo dnf install -y --skip-unavailable \
     xdg-desktop-portal-gnome \
     xdg-desktop-portal-gtk \
     polkit \
-    mate-polkit \
     foot \
     pipewire \
     wireplumber \
@@ -78,7 +77,24 @@ sudo dnf install -y --skip-unavailable noctalia-git noctalia-greeter 2>/dev/null
 sudo dnf install -y --skip-unavailable noctalia || \
 sudo dnf install -y --skip-unavailable noctalia-git
 
-# 3. Configure Niri (~/.config/niri/config.kdl)
+# 3. Configure Noctalia Shell (~/.config/noctalia/config.toml)
+NOCTALIA_DIR="$HOME/.config/noctalia"
+NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
+mkdir -p "$NOCTALIA_DIR"
+
+if [ ! -f "$NOCTALIA_CONF" ]; then
+    log_info "Enabling Noctalia native polkit authentication agent..."
+    cat << 'EOF' > "$NOCTALIA_CONF"
+[shell]
+polkit_agent = true
+EOF
+else
+    if ! grep -q "polkit_agent" "$NOCTALIA_CONF"; then
+        sed -i '/\[shell\]/a polkit_agent = true' "$NOCTALIA_CONF" 2>/dev/null || echo -e "\n[shell]\npolkit_agent = true" >> "$NOCTALIA_CONF"
+    fi
+fi
+
+# 4. Configure Niri (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
 CONFIG_FILE="$CONFIG_DIR/config.kdl"
 mkdir -p "$CONFIG_DIR"
@@ -135,7 +151,7 @@ else
     log_info "Noctalia configuration already present in config.kdl, skipping injection."
 fi
 
-# 4. Configure Greetd + Noctalia Greeter
+# 5. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
@@ -175,7 +191,7 @@ else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 5. Verification
+# 6. Verification
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
