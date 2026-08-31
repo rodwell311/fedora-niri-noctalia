@@ -99,18 +99,23 @@ CONFIG_DIR="$HOME/.config/niri"
 CONFIG_FILE="$CONFIG_DIR/config.kdl"
 mkdir -p "$CONFIG_DIR"
 
-if [ ! -f "$CONFIG_FILE" ]; then
-    if [ -f /usr/share/niri/config.kdl ]; then
-        log_info "Copying default niri config from /usr/share/niri/config.kdl..."
+# Download complete upstream default config if no full config exists
+if [ ! -f "$CONFIG_FILE" ] || [ $(wc -l < "$CONFIG_FILE" 2>/dev/null || echo 0) -lt 50 ]; then
+    log_info "Fetching full default Niri configuration template..."
+    if [ -f /etc/niri/config.kdl ]; then
+        cp /etc/niri/config.kdl "$CONFIG_FILE"
+    elif [ -f /usr/share/niri/config.kdl ]; then
         cp /usr/share/niri/config.kdl "$CONFIG_FILE"
     else
-        touch "$CONFIG_FILE"
+        curl -fsSL https://raw.githubusercontent.com/YaLTeR/niri/main/resources/default-config.kdl -o "$CONFIG_FILE" || touch "$CONFIG_FILE"
     fi
+    # Disable default waybar spawn if present
+    sed -i 's/^spawn-at-startup "waybar"/\/\/ spawn-at-startup "waybar"/' "$CONFIG_FILE" 2>/dev/null || true
 fi
 
 # Inject Noctalia settings if not present
 if ! grep -q 'spawn-at-startup "noctalia"' "$CONFIG_FILE"; then
-    log_info "Injecting Noctalia autostart and rules into $CONFIG_FILE..."
+    log_info "Injecting Noctalia autostart, bindings, and rules into $CONFIG_FILE..."
     cat << 'EOF' >> "$CONFIG_FILE"
 
 // --- Noctalia Integration ---
@@ -147,8 +152,6 @@ debug {
 // -----------------------------
 EOF
     log_success "Noctalia rules appended to config.kdl"
-else
-    log_info "Noctalia configuration already present in config.kdl, skipping injection."
 fi
 
 # 5. Configure Greetd + Noctalia Greeter
@@ -156,10 +159,15 @@ if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-gre
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
     
-    sudo mkdir -p /var/lib/noctalia-greeter
-    if id "greeter" &>/dev/null; then
-        sudo chown -R greeter:greeter /var/lib/noctalia-greeter
+    # Ensure greeter user exists and belongs to video/input
+    if ! id "greeter" &>/dev/null; then
+        sudo useradd -r -M -G video,input,render -s /sbin/nologin greeter 2>/dev/null || true
+    else
+        sudo usermod -aG video,input,render greeter 2>/dev/null || true
     fi
+
+    sudo mkdir -p /var/lib/noctalia-greeter
+    sudo chown -R greeter:greeter /var/lib/noctalia-greeter 2>/dev/null || true
 
     sudo mkdir -p /etc/greetd
     if [ -f /etc/greetd/config.toml ]; then
@@ -177,6 +185,7 @@ EOF
     log_success "Greetd configured to use Noctalia Greeter (${GREETER_BIN})"
 
     sudo systemctl enable accounts-daemon.service 2>/dev/null || true
+    sudo systemctl set-default graphical.target 2>/dev/null || true
 
     log_info "Enabling greetd service..."
     for dm in gdm sddm lightdm; do
@@ -186,7 +195,7 @@ EOF
         fi
     done
     sudo systemctl enable greetd.service
-    log_success "greetd.service enabled."
+    log_success "greetd.service enabled with graphical.target default."
 else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
