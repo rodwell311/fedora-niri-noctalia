@@ -75,7 +75,7 @@ art_size     = 18
 
 [widget.network]
 show_label = false
-vpn_status = "replace"
+vpn_status = "hidden"
 
 [widget.net-speed-down]
 type = "sysmon"
