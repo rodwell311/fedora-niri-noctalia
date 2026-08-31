@@ -24,23 +24,41 @@ fi
 FEDORA_VERSION=$(rpm -E %fedora 2>/dev/null || grep -oP '(?<=VERSION_ID=)[0-9]+' /etc/os-release)
 log_info "Detected Fedora release: ${FEDORA_VERSION}"
 
-# 1. Update and install Niri & base Wayland utilities
-log_info "Installing Niri and core Wayland tools..."
-sudo dnf install -y niri xdg-desktop-portal-gnome polkit-gnome foot greetd accountsservice
-
-# 2. Setup Repositories and Install Noctalia + Noctalia Greeter
-log_info "Installing Noctalia Shell and Noctalia Greeter..."
-if [ "$FEDORA_VERSION" -ge 44 ] 2>/dev/null; then
-    sudo dnf install -y noctalia noctalia-greeter || sudo dnf install -y noctalia
-else
-    log_info "Enabling Copr repository for Noctalia & Greeter..."
-    if ! sudo dnf copr enable -y lionheartp/Hyprland; then
-        log_warn "Standard Copr enable failed. Adding repository directly..."
-        sudo curl -fsSL "https://download.copr.fedorainfracloud.org/results/lionheartp/Hyprland/fedora-${FEDORA_VERSION}-\$basearch/lionheartp-Hyprland-fedora-${FEDORA_VERSION}.repo" \
-            -o "/etc/yum.repos.d/_copr_lionheartp-Hyprland.repo"
+# Helper to enable Copr safely with CDN fallback
+enable_copr() {
+    local copr_name="$1"
+    local repo_user="${copr_name%%/*}"
+    local repo_project="${copr_name##*/}"
+    
+    log_info "Enabling Copr repository: ${copr_name}..."
+    if ! sudo dnf copr enable -y "${copr_name}" 2>/dev/null; then
+        log_warn "Standard Copr enable for ${copr_name} failed. Using direct CDN repo fallback..."
+        sudo curl -fsSL "https://copr.fedorainfracloud.org/coprs/${repo_user}/${repo_project}/repo/fedora-${FEDORA_VERSION}/${repo_user}-${repo_project}-fedora-${FEDORA_VERSION}.repo" \
+            -o "/etc/yum.repos.d/_copr_${repo_user}-${repo_project}.repo" || true
     fi
-    sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || sudo dnf install -y noctalia noctalia-greeter
-fi
+}
+
+# 1. Enable Required COPR Repositories
+# - yalter/niri: Official Niri upstream repository on Fedora
+# - lionheartp/Hyprland: Noctalia shell and Noctalia greeter packages
+enable_copr "yalter/niri"
+enable_copr "lionheartp/Hyprland"
+
+# 2. Install Niri, Noctalia, Greeter, and Portal dependencies
+log_info "Installing packages (niri, noctalia, noctalia-greeter, greetd, etc.)..."
+sudo dnf install -y \
+    niri \
+    greetd \
+    accountsservice \
+    xdg-desktop-portal-gnome \
+    polkit-gnome \
+    foot
+
+# Install noctalia & greeter
+sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || \
+sudo dnf install -y noctalia noctalia-greeter 2>/dev/null || \
+sudo dnf install -y noctalia-git || \
+sudo dnf install -y noctalia
 
 # 3. Configure Niri (~/.config/niri/config.kdl)
 CONFIG_DIR="$HOME/.config/niri"
