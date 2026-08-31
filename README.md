@@ -1,6 +1,6 @@
-# Fedora Niri + Noctalia Shell Installer
+# Fedora Niri + Noctalia Shell + Greeter Installer
 
-Automated installer for **Niri** (scrollable-tiling Wayland compositor) and **Noctalia** (native Wayland desktop shell) on Fedora.
+Automated installer for **Niri** (scrollable-tiling Wayland compositor), **Noctalia** (native Wayland desktop shell), and **Noctalia Greeter** (`greetd` login screen) on Fedora.
 
 ## Quick Install (One-Line)
 
@@ -9,8 +9,8 @@ curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/mai
 ```
 
 ## What it does
-1. Detects Fedora version.
-2. Installs `niri`, `xdg-desktop-portal-gnome`, `polkit-gnome`, and `foot`.
-3. Installs `noctalia` (via official repos on Fedora 44+, or Copr repo on Fedora 40-43).
-4. Configures `~/.config/niri/config.kdl` with Noctalia autostart, IPC shortcuts, and floating window rules.
-5. Validates the generated Niri configuration.
+1. **System & Deps:** Detects Fedora version and installs `niri`, `greetd`, `accountsservice`, `xdg-desktop-portal-gnome`, `polkit-gnome`, and `foot`.
+2. **Noctalia Ecosystem:** Installs `noctalia` and `noctalia-greeter` (via official Fedora repo or Copr `lionheartp/Hyprland`).
+3. **Niri Integration:** Configures `~/.config/niri/config.kdl` with Noctalia autostart, IPC shortcuts (`Mod+Space`, `Mod+S`, etc.), and layer rules.
+4. **Display Manager:** Configures `/etc/greetd/config.toml` to launch `noctalia-greeter-session`, disables legacy display managers (GDM/SDDM), and enables `greetd.service`.
+5. **Validation:** Runs `niri validate` to ensure config syntax correctness.

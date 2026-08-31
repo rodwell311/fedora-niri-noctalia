@@ -2,7 +2,7 @@
 set -e
 
 # ==============================================================================
-# Installer: Niri + Noctalia Shell on Fedora
+# Installer: Niri + Noctalia Shell + Noctalia Greeter on Fedora
 # ==============================================================================
 
 RED='\033[0;31m'
@@ -24,23 +24,22 @@ fi
 FEDORA_VERSION=$(rpm -E %fedora 2>/dev/null || grep -oP '(?<=VERSION_ID=)[0-9]+' /etc/os-release)
 log_info "Detected Fedora release: ${FEDORA_VERSION}"
 
-# 1. Update and install Niri
+# 1. Update and install Niri & base Wayland utilities
 log_info "Installing Niri and core Wayland tools..."
-sudo dnf install -y niri xdg-desktop-portal-gnome polkit-gnome foot
+sudo dnf install -y niri xdg-desktop-portal-gnome polkit-gnome foot greetd accountsservice
 
-# 2. Install Noctalia
-log_info "Installing Noctalia Shell..."
+# 2. Setup Repositories and Install Noctalia + Noctalia Greeter
+log_info "Installing Noctalia Shell and Noctalia Greeter..."
 if [ "$FEDORA_VERSION" -ge 44 ] 2>/dev/null; then
-    sudo dnf install -y noctalia
+    sudo dnf install -y noctalia noctalia-greeter || sudo dnf install -y noctalia
 else
-    log_info "Enabling Copr repository for Noctalia..."
-    # Attempt standard copr enable; fallback to direct repo URL if CDN/Anubis blocks
+    log_info "Enabling Copr repository for Noctalia & Greeter..."
     if ! sudo dnf copr enable -y lionheartp/Hyprland; then
         log_warn "Standard Copr enable failed. Adding repository directly..."
         sudo curl -fsSL "https://download.copr.fedorainfracloud.org/results/lionheartp/Hyprland/fedora-${FEDORA_VERSION}-\$basearch/lionheartp-Hyprland-fedora-${FEDORA_VERSION}.repo" \
             -o "/etc/yum.repos.d/_copr_lionheartp-Hyprland.repo"
     fi
-    sudo dnf install -y noctalia-git || sudo dnf install -y noctalia
+    sudo dnf install -y noctalia-git noctalia-greeter 2>/dev/null || sudo dnf install -y noctalia noctalia-greeter
 fi
 
 # 3. Configure Niri (~/.config/niri/config.kdl)
@@ -100,11 +99,56 @@ else
     log_info "Noctalia configuration already present in config.kdl, skipping injection."
 fi
 
-# 4. Verification
+# 4. Configure Greetd + Noctalia Greeter
+if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
+    log_info "Configuring greetd for Noctalia Greeter..."
+    GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
+    
+    # Ensure state directory exists with proper permissions
+    sudo mkdir -p /var/lib/noctalia-greeter
+    if id "greeter" &>/dev/null; then
+        sudo chown -R greeter:greeter /var/lib/noctalia-greeter
+    fi
+
+    # Backup existing greetd config if any
+    sudo mkdir -p /etc/greetd
+    if [ -f /etc/greetd/config.toml ]; then
+        sudo cp /etc/greetd/config.toml /etc/greetd/config.toml.bak
+    fi
+
+    # Write greetd configuration
+    sudo tee /etc/greetd/config.toml > /dev/null << EOF
+[terminal]
+vt = 1
+
+[default_session]
+command = "${GREETER_BIN}"
+user = "greeter"
+EOF
+    log_success "Greetd configured to use Noctalia Greeter (${GREETER_BIN})"
+
+    # Enable accounts service for user avatars
+    sudo systemctl enable accounts-daemon.service 2>/dev/null || true
+
+    # Enable greetd service
+    log_info "Enabling greetd service (disabling existing display managers if needed)..."
+    for dm in gdm sddm lightdm; do
+        if systemctl is-enabled --quiet $dm.service 2>/dev/null; then
+            log_warn "Disabling $dm.service..."
+            sudo systemctl disable $dm.service
+        fi
+    done
+    sudo systemctl enable greetd.service
+    log_success "greetd.service enabled."
+else
+    log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
+fi
+
+# 5. Verification
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
 
 echo ""
-log_success "Installation complete!"
-echo -e "You can now log in to the ${GREEN}Niri${NC} session from your display manager or run ${GREEN}niri${NC} from TTY."
+log_success "Installation & configuration complete!"
+echo -e "Reboot or start ${GREEN}greetd${NC} to enter your Noctalia login screen."
