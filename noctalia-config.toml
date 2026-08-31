@@ -1,13 +1,13 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - MODERN MINIMALIST / FROSTED GLASS THEME
+# NOCTALIA SHELL V5 - SLIM & MINIMALIST
 # ==============================================================================
 
 [theme]
 mode = "dark"
 
 [shell]
-corner_radius_scale   = 1.0
-button_borders        = true
+corner_radius_scale   = 0.8
+button_borders        = false
 input_borders         = true
 popup_borders         = true
 card_borders          = true
@@ -28,7 +28,7 @@ speed   = 1.2
 
 [shell.shadow]
 direction = "down"
-alpha     = 0.45
+alpha     = 0.35
 
 [shell.panel]
 transparency_mode     = "soft"
@@ -45,7 +45,7 @@ polkit_placement      = "floating"
 launcher_position     = "center"
 clipboard_position    = "center"
 polkit_position       = "center"
-floating_offset       = 10
+floating_offset       = 6
 
 [shell.launcher]
 categories      = true
@@ -66,7 +66,7 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# TOP BAR CONFIGURATION (Floating Pill / Capsule Style)
+# TOP BAR CONFIGURATION (Slim, Compact, Flush)
 # ==============================================================================
 
 [bar.default]
@@ -75,28 +75,31 @@ enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 36
-background_opacity = 0.85
+thickness          = 28
+background_opacity = 0.88
 shadow             = true
-contact_shadow     = true
-panel_overlap      = 1
-radius             = 14
-margin_ends        = 14
-margin_edge        = 8
-padding            = 12
-widget_spacing     = 6
+contact_shadow     = false
+panel_overlap      = 0
+radius             = 0
+margin_ends        = 0
+margin_edge        = 0
+padding            = 8
+widget_spacing     = 4
 hover_highlight    = true
+scale              = 0.92
+font_scale         = 0.92
 
-# Capsule Pill Design
+# Capsule Pill Design (Compact)
 capsule            = true
 capsule_fill       = "surface_variant"
-capsule_thickness  = 0.82
-capsule_opacity    = 0.75
+capsule_thickness  = 0.85
+capsule_radius     = 6.0
+capsule_opacity    = 0.65
 
 # Widgets Layout
 start  = ["launcher", "workspaces", "active_window"]
-center = ["clock", "weather"]
-end    = ["media", "tray", "volume", "brightness", "network", "bluetooth", "battery", "control-center", "session"]
+center = ["clock"]
+end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
 
 [bar.default.dead_zone.actions]
 left   = "panel-toggle launcher"

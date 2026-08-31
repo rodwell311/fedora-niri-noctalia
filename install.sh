@@ -59,6 +59,7 @@ sudo dnf install -y --skip-unavailable \
     xdg-desktop-portal-gnome \
     xdg-desktop-portal-gtk \
     polkit \
+    alacritty \
     foot \
     pipewire \
     wireplumber \
@@ -86,7 +87,7 @@ if [ -f "$NOCTALIA_CONF" ]; then
     cp "$NOCTALIA_CONF" "$NOCTALIA_CONF.bak.$(date +%s)"
 fi
 
-log_info "Deploying modern Frosted-Glass Noctalia configuration..."
+log_info "Deploying slim & minimalist Noctalia configuration..."
 curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml -o "$NOCTALIA_CONF"
 log_success "Curated Noctalia config.toml deployed."
 
@@ -99,7 +100,7 @@ if [ -f "$CONFIG_FILE" ]; then
     cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%s)"
 fi
 
-log_info "Deploying modern macOS-styled Niri configuration..."
+log_info "Deploying borderless Niri configuration with Alacritty..."
 curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 

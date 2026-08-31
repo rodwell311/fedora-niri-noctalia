@@ -1,5 +1,5 @@
 // =============================================================================
-// NIRI + NOCTALIA POLISHED CONFIGURATION (macOS-like Modern Minimalist)
+// NIRI + NOCTALIA POLISHED CONFIGURATION (Minimalist, Slim, Sharp)
 // =============================================================================
 
 // Input Settings
@@ -26,7 +26,7 @@ input {
 prefer-no-csd
 
 layout {
-    gaps 12
+    gaps 8
     center-focused-column "never"
 
     preset-column-widths {
@@ -38,10 +38,9 @@ layout {
 
     default-column-width { proportion 0.5; }
 
+    // Clean window borderless (No active highlight border)
     focus-ring {
-        width 2
-        active-color "#89b4fa"
-        inactive-color "#1e1e2e50"
+        off
     }
 
     border {
@@ -50,10 +49,10 @@ layout {
 
     shadow {
         on
-        softness 20
-        spread 2
-        offset x=0 y=4
-        color "#00000055"
+        softness 16
+        spread 1
+        offset x=0 y=2
+        color "#00000040"
         draw-behind-window true
     }
 
@@ -70,9 +69,9 @@ overview {
     }
 }
 
-// Window Appearance & Corner Radius (macOS aesthetic)
+// Window Appearance & Corner Radius (Subtle 10px rounded corners)
 window-rule {
-    geometry-corner-radius 16
+    geometry-corner-radius 10
     clip-to-geometry true
 }
 
@@ -129,7 +128,7 @@ window-rule {
     open-floating true
 }
 
-// Autostart Noctalia Shell & Polkit
+// Autostart Noctalia Shell
 spawn-at-startup "noctalia"
 
 // Keybindings
@@ -140,10 +139,10 @@ binds {
     Mod+Comma { spawn-sh "noctalia msg settings-toggle"; }
     Alt+Tab { spawn-sh "noctalia msg window-switcher"; }
 
-    // Applications
-    Mod+Return { spawn "foot"; }
-    Mod+T { spawn "foot"; }
-    Mod+E { spawn "foot" "yazi"; }
+    // Applications (Alacritty default)
+    Mod+Return { spawn "alacritty"; }
+    Mod+T { spawn "alacritty"; }
+    Mod+E { spawn "alacritty" "-e" "yazi"; }
 
     // Window Management
     Mod+Q { close-window; }
