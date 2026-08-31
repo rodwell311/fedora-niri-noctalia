@@ -1,12 +1,12 @@
 # ==============================================================================
-# NOCTALIA SHELL V5 - SLIM & MINIMALIST
+# NOCTALIA SHELL V5 - ULTRA-SLIM & MINIMALIST
 # ==============================================================================
 
 [theme]
 mode = "dark"
 
 [shell]
-corner_radius_scale   = 0.8
+corner_radius_scale   = 0.7
 button_borders        = false
 input_borders         = true
 popup_borders         = true
@@ -28,7 +28,7 @@ speed   = 1.2
 
 [shell.shadow]
 direction = "down"
-alpha     = 0.35
+alpha     = 0.3
 
 [shell.panel]
 transparency_mode     = "soft"
@@ -45,12 +45,12 @@ polkit_placement      = "floating"
 launcher_position     = "center"
 clipboard_position    = "center"
 polkit_position       = "center"
-floating_offset       = 6
+floating_offset       = 4
 
 [shell.launcher]
 categories      = true
 show_icons      = true
-compact         = false
+compact         = true
 app_grid        = false
 sort_by_usage   = true
 show_app_origin_indicator = true
@@ -66,43 +66,62 @@ prefix = "emo"
 auto_sync = true
 
 # ==============================================================================
-# TOP BAR CONFIGURATION (Slim, Compact, Flush)
+# TOP BAR CONFIGURATION (Ultra-Slim 24px Bar)
 # ==============================================================================
 
-[bar.default]
+[bar]
+order = ["main"]
+
+[bar.main]
 position           = "top"
 enabled            = true
 auto_hide          = false
 reserve_space      = true
 layer              = "top"
-thickness          = 28
-background_opacity = 0.88
-shadow             = true
+thickness          = 24
+background_opacity = 0.85
+shadow             = false
 contact_shadow     = false
 panel_overlap      = 0
 radius             = 0
 margin_ends        = 0
 margin_edge        = 0
-padding            = 8
+padding            = 6
 widget_spacing     = 4
 hover_highlight    = true
-scale              = 0.92
-font_scale         = 0.92
+scale              = 0.85
+font_scale         = 0.85
 
-# Capsule Pill Design (Compact)
+# Compact Capsule Design
 capsule            = true
 capsule_fill       = "surface_variant"
 capsule_thickness  = 0.85
-capsule_radius     = 6.0
-capsule_opacity    = 0.65
+capsule_radius     = 4.0
+capsule_opacity    = 0.6
 
 # Widgets Layout
 start  = ["launcher", "workspaces", "active_window"]
 center = ["clock"]
 end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]
 
-[bar.default.dead_zone.actions]
+[bar.main.dead_zone.actions]
 left   = "panel-toggle launcher"
 right  = "panel-toggle control-center"
 scroll_up   = "volume-up"
 scroll_down = "volume-down"
+
+# Fallback alias for default
+[bar.default]
+position           = "top"
+enabled            = true
+thickness          = 24
+background_opacity = 0.85
+radius             = 0
+margin_ends        = 0
+margin_edge        = 0
+padding            = 6
+scale              = 0.85
+font_scale         = 0.85
+start  = ["launcher", "workspaces", "active_window"]
+center = ["clock"]
+end    = ["media", "tray", "volume", "brightness", "network", "battery", "control-center", "session"]

@@ -83,12 +83,11 @@ NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
 mkdir -p "$NOCTALIA_DIR"
 
-if [ -f "$NOCTALIA_CONF" ]; then
-    cp "$NOCTALIA_CONF" "$NOCTALIA_CONF.bak.$(date +%s)"
-fi
+# Clean up stale state overrides that block config reloads
+rm -f "$HOME/.local/state/noctalia/settings.toml" 2>/dev/null || true
 
-log_info "Deploying slim & minimalist Noctalia configuration..."
-curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml -o "$NOCTALIA_CONF"
+log_info "Deploying ultra-slim & minimalist Noctalia configuration..."
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml?$(date +%s)" -o "$NOCTALIA_CONF"
 log_success "Curated Noctalia config.toml deployed."
 
 # 4. Deploy Curated Niri Config (~/.config/niri/config.kdl)
@@ -96,12 +95,8 @@ CONFIG_DIR="$HOME/.config/niri"
 CONFIG_FILE="$CONFIG_DIR/config.kdl"
 mkdir -p "$CONFIG_DIR"
 
-if [ -f "$CONFIG_FILE" ]; then
-    cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%s)"
-fi
-
 log_info "Deploying borderless Niri configuration with Alacritty..."
-curl -fsSL https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl -o "$CONFIG_FILE"
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 
 # 5. Configure Greetd + Noctalia Greeter
@@ -150,11 +145,16 @@ else
     log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 6. Verification
+# 6. Verification & Live Reload
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
 
+# Trigger live reload if running inside graphical session
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    noctalia msg restart 2>/dev/null || true
+    niri msg action reload-config 2>/dev/null || true
+fi
+
 echo ""
 log_success "Installation & configuration complete!"
-echo -e "Reboot or start ${GREEN}greetd${NC} to enter your Noctalia login screen."
