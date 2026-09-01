@@ -72,6 +72,8 @@ sudo dnf install -y --skip-unavailable \
     zsh-autosuggestions \
     zsh-syntax-highlighting \
     util-linux-user \
+    fuse \
+    fuse-libs \
     fontawesome-fonts \
     mesa-dri-drivers \
     vulkan-loader
