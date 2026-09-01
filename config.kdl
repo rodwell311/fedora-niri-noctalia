@@ -12,12 +12,12 @@ environment {
     XDG_CURRENT_DESKTOP "niri"
     XDG_SESSION_TYPE "wayland"
     XCURSOR_THEME "macOS"
-    XCURSOR_SIZE "24"
+    XCURSOR_SIZE "20"
 }
 
 cursor {
     xcursor-theme "macOS"
-    xcursor-size 24
+    xcursor-size 20
 }
 
 prefer-no-csd
