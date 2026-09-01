@@ -109,9 +109,10 @@ log_success "Alacritty configuration deployed."
 log_info "Setting up Starship prompt and Zsh environment..."
 if ! command -v starship &>/dev/null; then
     curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir "$HOME/.local/bin"
-fi
+# Deploy Zsh & Starship Configurations
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/zshrc?$(date +%s)" -o "$HOME/.zshrc"
-mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.config/fastfetch"
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/fastfetch-config.jsonc?$(date +%s)" -o "$HOME/.config/fastfetch/config.jsonc"
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/starship.toml?$(date +%s)" -o "$HOME/.config/starship.toml"
 log_success "Zsh & Starship configuration deployed."
 
