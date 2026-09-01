@@ -113,8 +113,8 @@ panel_overlap      = 0
 radius             = 0
 margin_ends        = 0
 margin_edge        = 0
-padding            = 14
-widget_spacing     = 14
+padding            = 10
+widget_spacing     = 9
 hover_highlight    = true
 scale              = 0.95
 
