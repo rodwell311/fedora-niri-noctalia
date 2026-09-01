@@ -49,7 +49,7 @@ else
     enable_copr "lionheartp/Hyprland"
 fi
 
-# 2. Install Core System, Fonts, Audio, Portals, and Niri/Noctalia
+# 2. Install Core System, Fonts, Audio, Portals, Zsh, and Niri/Noctalia
 log_info "Installing compositor, shell, fonts, and base multimedia stack..."
 sudo dnf install -y --skip-unavailable \
     niri \
@@ -68,6 +68,10 @@ sudo dnf install -y --skip-unavailable \
     brightnessctl \
     google-noto-sans-fonts \
     google-noto-color-emoji-fonts \
+    zsh \
+    zsh-autosuggestions \
+    zsh-syntax-highlighting \
+    util-linux-user \
     fontawesome-fonts \
     mesa-dri-drivers \
     vulkan-loader
@@ -101,7 +105,17 @@ log_info "Deploying CachyOS/Catppuccin styled Alacritty configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/alacritty.toml?$(date +%s)" -o "$ALACRITTY_DIR/alacritty.toml"
 log_success "Alacritty configuration deployed."
 
-# 4. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
+# 4. Deploy Zsh and Starship Prompt Configurations
+log_info "Setting up Starship prompt and Zsh environment..."
+if ! command -v starship &>/dev/null; then
+    curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir "$HOME/.local/bin"
+fi
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/zshrc?$(date +%s)" -o "$HOME/.zshrc"
+mkdir -p "$HOME/.config"
+curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/starship.toml?$(date +%s)" -o "$HOME/.config/starship.toml"
+log_success "Zsh & Starship configuration deployed."
+
+# 5. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
 NOCTALIA_DIR="$HOME/.config/noctalia"
 NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
 mkdir -p "$NOCTALIA_DIR/palettes"
