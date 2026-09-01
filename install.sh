@@ -176,7 +176,7 @@ fi
 
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
 gsettings set org.gnome.desktop.interface cursor-theme 'macOS'
-gsettings set org.gnome.desktop.interface cursor-size 20
+gsettings set org.gnome.desktop.interface cursor-size 22
 gsettings set org.gnome.desktop.interface font-name 'SF Pro Display 11'
 gsettings set org.gnome.desktop.interface document-font-name 'SF Pro Text 11'
 gsettings set org.gnome.desktop.interface monospace-font-name 'SF Mono 11'
@@ -194,7 +194,7 @@ cat << 'EOF' > "$HOME/.config/gtk-3.0/settings.ini"
 gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
 gtk-cursor-theme-name=macOS
-gtk-cursor-theme-size=20
+gtk-cursor-theme-size=22
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
 EOF
@@ -204,7 +204,7 @@ cat << 'EOF' > "$HOME/.config/gtk-4.0/settings.ini"
 gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
 gtk-cursor-theme-name=macOS
-gtk-cursor-theme-size=20
+gtk-cursor-theme-size=22
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
 EOF
