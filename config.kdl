@@ -4,6 +4,7 @@
 
 // Environment variables
 environment {
+    XDG_DATA_DIRS "/home/rodwell/.local/share:/home/rodwell/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share"
     ELECTRON_OZONE_PLATFORM_HINT "auto"
     QT_QPA_PLATFORM "wayland"
     QT_QPA_PLATFORMTHEME "gtk3"
