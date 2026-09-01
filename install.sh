@@ -142,9 +142,34 @@ log_info "Deploying CachyOS/anxi0uz Niri configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 
-# 6. Configure Standard User Directories & GIO Icons
-log_info "Setting up XDG user directories and icons..."
-mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Public" "$HOME/Templates" "$HOME/Videos"
+# 6. Configure macOS (WhiteSur) Icon Theme & User Directories
+log_info "Installing macOS WhiteSur icon theme and setting up directories..."
+if [ ! -d "$HOME/.local/share/icons/WhiteSur-dark" ]; then
+    rm -rf /tmp/whitesur-icons
+    git clone --depth=1 https://github.com/vinceliuice/WhiteSur-icon-theme.git /tmp/whitesur-icons
+    cd /tmp/whitesur-icons && ./install.sh -d "$HOME/.local/share/icons" -t default -a
+    rm -rf /tmp/whitesur-icons
+    cd "$HOME"
+fi
+
+gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
+
+mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+cat << 'EOF' > "$HOME/.config/gtk-3.0/settings.ini"
+[Settings]
+gtk-icon-theme-name=WhiteSur-dark
+gtk-theme-name=Adwaita-dark
+gtk-application-prefer-dark-theme=1
+EOF
+
+cat << 'EOF' > "$HOME/.config/gtk-4.0/settings.ini"
+[Settings]
+gtk-icon-theme-name=WhiteSur-dark
+gtk-theme-name=Adwaita-dark
+gtk-application-prefer-dark-theme=1
+EOF
+
+mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Videos" "$HOME/Templates" "$HOME/Public"
 
 printf "%s\n" \
     "XDG_DESKTOP_DIR=\"\$HOME/Desktop\"" \
