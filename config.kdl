@@ -187,7 +187,7 @@ binds {
     // Applications
     Mod+Return hotkey-overlay-title="Open Terminal: Alacritty" { spawn "alacritty"; }
     Mod+B hotkey-overlay-title="Open Browser: Brave Origin" { spawn "brave-origin"; }
-    Mod+E hotkey-overlay-title="File Manager: Yazi" { spawn "alacritty" "-e" "yazi"; }
+    Mod+E hotkey-overlay-title="File Manager: Nautilus" { spawn "nautilus"; }
 
     // Noctalia Integration
     Mod+Escape hotkey-overlay-title="Power / Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }

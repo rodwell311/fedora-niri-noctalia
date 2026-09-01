@@ -60,7 +60,7 @@ rm -rf ~/.local/state/noctalia && curl -fsSL "https://raw.githubusercontent.com/
 | `Mod + Return` | Launch Terminal (**Alacritty**) |
 | `Mod + B` | Launch Browser (**Brave Origin**) |
 | `Mod + V` | Open Clipboard Manager (**Noctalia**) |
-| `Mod + E` | Launch File Manager (**Yazi**) |
+| `Mod + E` | Launch File Manager (**Nautilus**) |
 | `Mod + Space` / `Mod + Ctrl + Return` | App Launcher (Noctalia) |
 | `Mod + S` | Control Center (Quick Settings) |
 | `Mod + Shift + S` | Noctalia Settings |
