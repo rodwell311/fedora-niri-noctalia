@@ -1,9 +1,15 @@
 [general]
+import = [
+    "~/.config/alacritty/themes/noctalia.toml"
+]
 live_config_reload = true
 
 [env]
 TERM = "xterm-256color"
 WINIT_X11_SCALE_FACTOR = "1.0"
+
+[terminal]
+shell = { program = "/usr/bin/zsh" }
 
 [window]
 dimensions = { columns = 100, lines = 30 }
@@ -23,33 +29,6 @@ bold = { family = "monospace", style = "Bold" }
 italic = { family = "monospace", style = "Italic" }
 bold_italic = { family = "monospace", style = "Bold Italic" }
 size = 11.5
-
-[colors]
-draw_bold_text_with_bright_colors = true
-
-[colors.primary]
-background = "0x1E1E2E"
-foreground = "0xCDD6F4"
-
-[colors.normal]
-black   = "0x45475A"
-red     = "0xF38BA8"
-green   = "0xA6E3A1"
-yellow  = "0xF9E2AF"
-blue    = "0x89B4FA"
-magenta = "0xF5C2E7"
-cyan    = "0x94E2D5"
-white   = "0xBAC2DE"
-
-[colors.bright]
-black   = "0x585B70"
-red     = "0xF38BA8"
-green   = "0xA6E3A1"
-yellow  = "0xF9E2AF"
-blue    = "0x89B4FA"
-magenta = "0xF5C2E7"
-cyan    = "0x94E2D5"
-white   = "0xA6ADC8"
 
 [selection]
 save_to_clipboard = true
