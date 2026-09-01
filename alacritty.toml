@@ -24,10 +24,10 @@ history = 10000
 multiplier = 3
 
 [font]
-normal = { family = "monospace", style = "Regular" }
-bold = { family = "monospace", style = "Bold" }
-italic = { family = "monospace", style = "Italic" }
-bold_italic = { family = "monospace", style = "Bold Italic" }
+normal = { family = "SF Mono" }
+bold = { family = "SF Mono" }
+italic = { family = "SF Mono" }
+bold_italic = { family = "SF Mono" }
 size = 11.5
 
 [selection]

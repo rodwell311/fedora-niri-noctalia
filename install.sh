@@ -145,7 +145,20 @@ curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/ma
 log_success "Curated Niri config.kdl deployed."
 
 # 6. Configure macOS (WhiteSur) Icon Theme & User Directories
-log_info "Installing macOS WhiteSur icon theme and setting up directories..."
+log_info "Installing macOS WhiteSur icon theme, SF Pro fonts, and setting up directories..."
+mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono"
+if [ ! -f "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf" ]; then
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Medium.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Semibold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Semibold.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Bold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Bold.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Regular.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Medium.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Semibold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Semibold.otf"
+    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Bold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Bold.otf"
+    fc-cache -f "$HOME/.local/share/fonts"
+fi
+
 if [ ! -d "$HOME/.local/share/icons/WhiteSur-dark" ]; then
     rm -rf /tmp/whitesur-icons
     git clone --depth=1 https://github.com/vinceliuice/WhiteSur-icon-theme.git /tmp/whitesur-icons
@@ -155,10 +168,14 @@ if [ ! -d "$HOME/.local/share/icons/WhiteSur-dark" ]; then
 fi
 
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
+gsettings set org.gnome.desktop.interface font-name 'SF Pro Display 11'
+gsettings set org.gnome.desktop.interface document-font-name 'SF Pro Text 11'
+gsettings set org.gnome.desktop.interface monospace-font-name 'SF Mono 11'
 
 mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
 cat << 'EOF' > "$HOME/.config/gtk-3.0/settings.ini"
 [Settings]
+gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
@@ -166,6 +183,7 @@ EOF
 
 cat << 'EOF' > "$HOME/.config/gtk-4.0/settings.ini"
 [Settings]
+gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
