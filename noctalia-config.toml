@@ -52,7 +52,7 @@ floating_offset       = 4
 
 [system.monitor]
 enabled = true
-network_poll_seconds = 1.0
+cpu_poll_seconds = 1.0
 
 # ==============================================================================
 # WIDGET DEFINITIONS
@@ -77,14 +77,12 @@ art_size     = 18
 show_label = false
 vpn_status = "replace"
 
-[widget.net-speed-down]
+[widget.cpu-usage]
 type = "sysmon"
-stat = "net_rx"
+stat = "cpu_usage"
 visualization = "none"
 show_value = true
 show_glyph = true
-network_speed_unit = "auto"
-network_speed_compact = true
 
 [widget.tray]
 drawer = true
@@ -129,7 +127,7 @@ capsule_opacity    = 0.65
 
 start  = ["fedora-logo", "workspaces", "active_window"]
 center = ["media"]
-end    = ["tray", "network", "net-speed-down", "volume", "brightness", "clock", "control-center"]
+end    = ["tray", "network", "cpu-usage", "volume", "brightness", "clock", "control-center"]
 
 [bar.default.dead_zone.actions]
 left   = "panel-toggle launcher"
