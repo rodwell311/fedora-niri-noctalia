@@ -179,7 +179,14 @@ hotkey-overlay {
 }
 
 // Autostart Noctalia
+// Autostart background processes
 spawn-at-startup "noctalia"
+spawn-at-startup "swayidle" "-w" \
+    "timeout" "300" "noctalia msg session lock" \
+    "timeout" "360" "niri msg action power-off-monitors" \
+    "resume" "niri msg action power-on-monitors" \
+    "timeout" "900" "systemctl suspend" \
+    "before-sleep" "noctalia msg session lock"
 
 // Keybindings
 binds {

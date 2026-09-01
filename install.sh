@@ -66,6 +66,8 @@ sudo dnf install -y --skip-unavailable \
     pipewire-pulseaudio \
     pipewire-alsa \
     brightnessctl \
+    swayidle \
+    swaylock \
     google-noto-sans-fonts \
     google-noto-color-emoji-fonts \
     zsh \
