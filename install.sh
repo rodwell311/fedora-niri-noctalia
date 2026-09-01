@@ -79,6 +79,22 @@ sudo dnf install -y --skip-unavailable noctalia || \
 sudo dnf install -y --skip-unavailable noctalia-git
 
 # 3. Deploy Alacritty Config (~/.config/alacritty/alacritty.toml)
+log_info "Installing comprehensive fonts (CJK, Emoji, Symbols, International Scripts)..."
+sudo dnf install -y \
+    google-noto-sans-cjk-fonts \
+    google-noto-serif-cjk-fonts \
+    google-noto-color-emoji-fonts \
+    google-noto-sans-symbols-fonts \
+    google-noto-sans-symbols-2-fonts \
+    google-noto-sans-arabic-fonts \
+    google-noto-sans-devanagari-fonts \
+    google-noto-sans-thai-fonts \
+    google-noto-sans-khmer-fonts \
+    google-noto-sans-myanmar-fonts \
+    fira-code-fonts \
+    jetbrains-mono-fonts \
+    xdg-user-dirs 2>/dev/null || true
+
 ALACRITTY_DIR="$HOME/.config/alacritty"
 mkdir -p "$ALACRITTY_DIR"
 log_info "Deploying CachyOS/Catppuccin styled Alacritty configuration..."
