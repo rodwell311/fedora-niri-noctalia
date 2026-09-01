@@ -11,6 +11,13 @@ environment {
     QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
     XDG_CURRENT_DESKTOP "niri"
     XDG_SESSION_TYPE "wayland"
+    XCURSOR_THEME "macOS"
+    XCURSOR_SIZE "24"
+}
+
+cursor {
+    xcursor-theme "macOS"
+    xcursor-size 24
 }
 
 prefer-no-csd

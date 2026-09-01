@@ -144,9 +144,9 @@ log_info "Deploying CachyOS/anxi0uz Niri configuration..."
 curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
 log_success "Curated Niri config.kdl deployed."
 
-# 6. Configure macOS (WhiteSur) Icon Theme & User Directories
-log_info "Installing macOS WhiteSur icon theme, SF Pro fonts, and setting up directories..."
-mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono"
+# 6. Configure macOS (WhiteSur) Icon & Cursor Theme, SF Pro fonts, and Directories
+log_info "Installing macOS WhiteSur icon theme, macOS cursor, SF Pro fonts, and setting up directories..."
+mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono" "$HOME/.local/share/icons" "$HOME/.icons"
 if [ ! -f "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf" ]; then
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf"
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Medium.otf"
@@ -167,16 +167,34 @@ if [ ! -d "$HOME/.local/share/icons/WhiteSur-dark" ]; then
     cd "$HOME"
 fi
 
+if [ ! -d "$HOME/.local/share/icons/macOS" ]; then
+    curl -fSL "https://github.com/ful1e5/apple_cursor/releases/download/v2.0.1/macOS.tar.xz" -o /tmp/macOS.tar.xz
+    tar -xJf /tmp/macOS.tar.xz -C "$HOME/.local/share/icons/"
+    tar -xJf /tmp/macOS.tar.xz -C "$HOME/.icons/" 2>/dev/null || true
+    rm -f /tmp/macOS.tar.xz
+fi
+
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
+gsettings set org.gnome.desktop.interface cursor-theme 'macOS'
+gsettings set org.gnome.desktop.interface cursor-size 24
 gsettings set org.gnome.desktop.interface font-name 'SF Pro Display 11'
 gsettings set org.gnome.desktop.interface document-font-name 'SF Pro Text 11'
 gsettings set org.gnome.desktop.interface monospace-font-name 'SF Mono 11'
 
-mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.icons/default"
+cat << 'EOF' > "$HOME/.icons/default/index.theme"
+[Icon Theme]
+Name=Default
+Comment=Default Cursor Theme
+Inherits=macOS
+EOF
+
 cat << 'EOF' > "$HOME/.config/gtk-3.0/settings.ini"
 [Settings]
 gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
+gtk-cursor-theme-name=macOS
+gtk-cursor-theme-size=24
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
 EOF
@@ -185,6 +203,8 @@ cat << 'EOF' > "$HOME/.config/gtk-4.0/settings.ini"
 [Settings]
 gtk-font-name=SF Pro Display 11
 gtk-icon-theme-name=WhiteSur-dark
+gtk-cursor-theme-name=macOS
+gtk-cursor-theme-size=24
 gtk-theme-name=Adwaita-dark
 gtk-application-prefer-dark-theme=1
 EOF
