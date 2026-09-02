@@ -1,5 +1,7 @@
 # Fedora Minimal — Niri + Noctalia Shell + macOS Aesthetic Dotfiles
 
+![Desktop Preview](pictures/screenshots/desktop-preview.png)
+
 Repository dotfiles & automated deployment script untuk lingkungan desktop Wayland minimalis, modern, dan elegan berbasis **Fedora Minimal / Everything**, **Niri Compositor**, dan **Noctalia Shell v5**.
 
 ---
