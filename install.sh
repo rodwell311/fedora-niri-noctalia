@@ -121,11 +121,6 @@ if ! command -v brave-origin &>/dev/null && ! command -v brave-browser &>/dev/nu
     curl -fsS https://dl.brave.com/install.sh | FLAVOR=origin sh || true
 fi
 
-# Configure Brave keyring flags to avoid password unlock prompts
-mkdir -p "$HOME/.config"
-grep -qxF "--password-store=basic" "$HOME/.config/brave-flags.conf" 2>/dev/null || echo "--password-store=basic" >> "$HOME/.config/brave-flags.conf"
-grep -qxF "--password-store=basic" "$HOME/.config/brave-origin-flags.conf" 2>/dev/null || echo "--password-store=basic" >> "$HOME/.config/brave-origin-flags.conf"
-
 # 4. Deploy Apple SF Pro & SF Mono Fonts
 log_info "Installing Apple SF Pro and SF Mono fonts..."
 mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono"

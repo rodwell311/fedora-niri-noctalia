@@ -187,6 +187,7 @@ hotkey-overlay {
 
 // Autostart Noctalia
 // Autostart background processes
+spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets,pkcs11,ssh"
 spawn-at-startup "noctalia"
 spawn-at-startup "swayidle" "-w" \
     "timeout" "300" "noctalia msg session lock" \
