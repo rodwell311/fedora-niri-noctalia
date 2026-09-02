@@ -2,7 +2,7 @@
 set -e
 
 # ==============================================================================
-# Installer: Niri + Noctalia Shell + Noctalia Greeter on Fedora
+# Dotfiles Installer: Niri + Noctalia Shell + macOS Aesthetics on Fedora
 # (Compatible with Fedora Workstation, Silverblue, & Fedora Everything Minimal)
 # ==============================================================================
 
@@ -25,6 +25,21 @@ fi
 FEDORA_VERSION=$(rpm -E %fedora 2>/dev/null || grep -oP '(?<=VERSION_ID=)[0-9]+' /etc/os-release)
 log_info "Detected Fedora release: ${FEDORA_VERSION}"
 
+# Determine dotfiles root directory (local cloned repo or remote raw download)
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+RAW_URL="https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main"
+
+fetch_file() {
+    local src="$1"
+    local dest="$2"
+    mkdir -p "$(dirname "$dest")"
+    if [ -f "$DOTFILES_DIR/$src" ]; then
+        cp -r "$DOTFILES_DIR/$src" "$dest"
+    else
+        curl -fsSL "${RAW_URL}/${src}?$(date +%s)" -o "$dest"
+    fi
+}
+
 # Helper to enable Copr safely with CDN fallback
 enable_copr() {
     local copr_name="$1"
@@ -39,7 +54,7 @@ enable_copr() {
     fi
 }
 
-# 1. Setup Repositories based on Fedora Version
+# 1. Setup Repositories
 if [ "$FEDORA_VERSION" -ge 44 ] 2>/dev/null; then
     log_info "Fedora 44+ detected: 'niri' and 'noctalia' are in official repos."
     enable_copr "lionheartp/Hyprland"
@@ -49,7 +64,7 @@ else
     enable_copr "lionheartp/Hyprland"
 fi
 
-# 2. Install Core System, Fonts, Audio, Portals, Zsh, and Niri/Noctalia
+# 2. Install Core System, Audio, Portals, Shell, Fonts, and Utilities
 log_info "Installing compositor, shell, fonts, and base multimedia stack..."
 sudo dnf install -y --skip-unavailable \
     niri \
@@ -70,12 +85,26 @@ sudo dnf install -y --skip-unavailable \
     swaylock \
     google-noto-sans-fonts \
     google-noto-color-emoji-fonts \
+    google-noto-sans-cjk-fonts \
+    google-noto-serif-cjk-fonts \
+    google-noto-sans-symbols-fonts \
+    google-noto-sans-symbols-2-fonts \
+    google-noto-sans-arabic-fonts \
+    google-noto-sans-devanagari-fonts \
+    google-noto-sans-thai-fonts \
+    google-noto-sans-khmer-fonts \
+    google-noto-sans-myanmar-fonts \
+    fira-code-fonts \
+    jetbrains-mono-fonts \
+    fastfetch \
     zsh \
     zsh-autosuggestions \
     zsh-syntax-highlighting \
     util-linux-user \
     fuse \
     fuse-libs \
+    xdg-user-dirs \
+    nautilus \
     fontawesome-fonts \
     mesa-dri-drivers \
     vulkan-loader
@@ -86,67 +115,15 @@ sudo dnf install -y --skip-unavailable noctalia-git noctalia-greeter 2>/dev/null
 sudo dnf install -y --skip-unavailable noctalia || \
 sudo dnf install -y --skip-unavailable noctalia-git
 
-# 3. Deploy Alacritty Config (~/.config/alacritty/alacritty.toml)
-log_info "Installing comprehensive fonts (CJK, Emoji, Symbols, International Scripts)..."
-sudo dnf install -y \
-    google-noto-sans-cjk-fonts \
-    google-noto-serif-cjk-fonts \
-    google-noto-color-emoji-fonts \
-    google-noto-sans-symbols-fonts \
-    google-noto-sans-symbols-2-fonts \
-    google-noto-sans-arabic-fonts \
-    google-noto-sans-devanagari-fonts \
-    google-noto-sans-thai-fonts \
-    google-noto-sans-khmer-fonts \
-    google-noto-sans-myanmar-fonts \
-    fira-code-fonts \
-    jetbrains-mono-fonts \
-    xdg-user-dirs 2>/dev/null || true
+# 3. Install Brave Origin Browser if not installed
+if ! command -v brave-origin &>/dev/null && ! command -v brave-browser &>/dev/null; then
+    log_info "Installing Brave Origin..."
+    curl -fsS https://dl.brave.com/install.sh | FLAVOR=origin sh || true
+fi
 
-ALACRITTY_DIR="$HOME/.config/alacritty"
-mkdir -p "$ALACRITTY_DIR"
-log_info "Deploying CachyOS/Catppuccin styled Alacritty configuration..."
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/alacritty.toml?$(date +%s)" -o "$ALACRITTY_DIR/alacritty.toml"
-log_success "Alacritty configuration deployed."
-
-# 4. Deploy Zsh and Starship Prompt Configurations
-log_info "Setting up Starship prompt and Zsh environment..."
-if ! command -v starship &>/dev/null; then
-    curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir "$HOME/.local/bin"
-# Deploy Zsh & Starship Configurations
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/zshrc?$(date +%s)" -o "$HOME/.zshrc"
-mkdir -p "$HOME/.config/fastfetch"
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/fastfetch-config.jsonc?$(date +%s)" -o "$HOME/.config/fastfetch/config.jsonc"
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/starship.toml?$(date +%s)" -o "$HOME/.config/starship.toml"
-log_success "Zsh & Starship configuration deployed."
-
-# 5. Deploy Curated Noctalia Config (~/.config/noctalia/config.toml)
-NOCTALIA_DIR="$HOME/.config/noctalia"
-NOCTALIA_CONF="$NOCTALIA_DIR/config.toml"
-mkdir -p "$NOCTALIA_DIR/palettes"
-
-# Clear entire cached GUI state overrides
-rm -rf "$HOME/.local/state/noctalia" 2>/dev/null || true
-
-log_info "Deploying custom high-contrast Catppuccin palette..."
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/CatppuccinCustom.json?$(date +%s)" -o "$NOCTALIA_DIR/palettes/CatppuccinCustom.json"
-
-log_info "Deploying Tokyo-Night Noctalia configuration..."
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/noctalia-config.toml?$(date +%s)" -o "$NOCTALIA_CONF"
-log_success "Curated Noctalia config.toml deployed."
-
-# 5. Deploy Curated Niri Config (~/.config/niri/config.kdl)
-CONFIG_DIR="$HOME/.config/niri"
-CONFIG_FILE="$CONFIG_DIR/config.kdl"
-mkdir -p "$CONFIG_DIR"
-
-log_info "Deploying CachyOS/anxi0uz Niri configuration..."
-curl -fsSL "https://raw.githubusercontent.com/rodwell311/fedora-niri-noctalia/main/config.kdl?$(date +%s)" -o "$CONFIG_FILE"
-log_success "Curated Niri config.kdl deployed."
-
-# 6. Configure macOS (WhiteSur) Icon & Cursor Theme, SF Pro fonts, and Directories
-log_info "Installing macOS WhiteSur icon theme, macOS cursor, SF Pro fonts, and setting up directories..."
-mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono" "$HOME/.local/share/icons" "$HOME/.icons"
+# 4. Deploy Apple SF Pro & SF Mono Fonts
+log_info "Installing Apple SF Pro and SF Mono fonts..."
+mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono"
 if [ ! -f "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf" ]; then
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf"
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Medium.otf"
@@ -156,9 +133,18 @@ if [ ! -f "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf" ]; then
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Medium.otf"
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Semibold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Semibold.otf"
     curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Bold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Bold.otf"
-    fc-cache -f "$HOME/.local/share/fonts"
 fi
 
+if [ ! -f "$HOME/.local/share/fonts/SF-Mono/SF-Mono-Regular.otf" ]; then
+    rm -rf /tmp/sf-mono && git clone --depth=1 https://github.com/ZulwiyozaPutra/SF-Mono-Font.git /tmp/sf-mono 2>/dev/null || true
+    cp /tmp/sf-mono/*.otf "$HOME/.local/share/fonts/SF-Mono/" 2>/dev/null || true
+    rm -rf /tmp/sf-mono
+fi
+fc-cache -f "$HOME/.local/share/fonts"
+
+# 5. Deploy WhiteSur Icon Theme & macOS Cursor Theme
+log_info "Installing WhiteSur icon theme and macOS cursor..."
+mkdir -p "$HOME/.local/share/icons" "$HOME/.icons"
 if [ ! -d "$HOME/.local/share/icons/WhiteSur-dark" ]; then
     rm -rf /tmp/whitesur-icons
     git clone --depth=1 https://github.com/vinceliuice/WhiteSur-icon-theme.git /tmp/whitesur-icons
@@ -174,6 +160,39 @@ if [ ! -d "$HOME/.local/share/icons/macOS" ]; then
     rm -f /tmp/macOS.tar.xz
 fi
 
+# 6. Deploy Wallpapers and Profile Avatar
+log_info "Deploying wallpapers and avatars to ~/Pictures/walls/..."
+mkdir -p "$HOME/Pictures/walls"
+fetch_file "pictures/walls/wallpaper.png" "$HOME/Pictures/walls/26668334.png"
+fetch_file "pictures/walls/avatar.jpg" "$HOME/Pictures/walls/hiyuki_profile.jpg"
+
+# 7. Deploy Starship Prompt & Shell Configurations
+log_info "Setting up Starship prompt and Zsh environment..."
+if ! command -v starship &>/dev/null; then
+    curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir "$HOME/.local/bin"
+fi
+
+fetch_file ".zshrc" "$HOME/.zshrc"
+fetch_file ".config/starship.toml" "$HOME/.config/starship.toml"
+fetch_file ".config/fastfetch/config.jsonc" "$HOME/.config/fastfetch/config.jsonc"
+
+# Set default shell to Zsh for current user
+if [ "$SHELL" != "$(which zsh)" ]; then
+    chsh -s "$(which zsh)" "$USER" 2>/dev/null || true
+fi
+
+# 8. Deploy Dotfiles (.config)
+log_info "Deploying config files..."
+fetch_file ".config/niri/config.kdl" "$HOME/.config/niri/config.kdl"
+fetch_file ".config/noctalia/config.toml" "$HOME/.config/noctalia/config.toml"
+fetch_file ".config/noctalia/icons/fedora.svg" "$HOME/.config/noctalia/icons/fedora.svg"
+fetch_file ".config/noctalia/palettes/CatppuccinCustom.json" "$HOME/.config/noctalia/palettes/CatppuccinCustom.json"
+fetch_file ".config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+fetch_file ".config/gtk-3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+fetch_file ".config/gtk-4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
+
+# 9. Set GNOME / GTK System Settings
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
 gsettings set org.gnome.desktop.interface cursor-theme 'macOS'
 gsettings set org.gnome.desktop.interface cursor-size 22
@@ -181,7 +200,7 @@ gsettings set org.gnome.desktop.interface font-name 'SF Pro Display 11'
 gsettings set org.gnome.desktop.interface document-font-name 'SF Pro Text 11'
 gsettings set org.gnome.desktop.interface monospace-font-name 'SF Mono 11'
 
-mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.icons/default"
+mkdir -p "$HOME/.icons/default"
 cat << 'EOF' > "$HOME/.icons/default/index.theme"
 [Icon Theme]
 Name=Default
@@ -189,26 +208,8 @@ Comment=Default Cursor Theme
 Inherits=macOS
 EOF
 
-cat << 'EOF' > "$HOME/.config/gtk-3.0/settings.ini"
-[Settings]
-gtk-font-name=SF Pro Display 11
-gtk-icon-theme-name=WhiteSur-dark
-gtk-cursor-theme-name=macOS
-gtk-cursor-theme-size=22
-gtk-theme-name=Adwaita-dark
-gtk-application-prefer-dark-theme=1
-EOF
-
-cat << 'EOF' > "$HOME/.config/gtk-4.0/settings.ini"
-[Settings]
-gtk-font-name=SF Pro Display 11
-gtk-icon-theme-name=WhiteSur-dark
-gtk-cursor-theme-name=macOS
-gtk-cursor-theme-size=22
-gtk-theme-name=Adwaita-dark
-gtk-application-prefer-dark-theme=1
-EOF
-
+# 10. Configure User Directories
+log_info "Setting up XDG user directories and icons..."
 mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Videos" "$HOME/Templates" "$HOME/Public"
 
 printf "%s\n" \
@@ -221,18 +222,7 @@ printf "%s\n" \
     "XDG_PICTURES_DIR=\"\$HOME/Pictures\"" \
     "XDG_VIDEOS_DIR=\"\$HOME/Videos\"" > "$HOME/.config/user-dirs.dirs"
 
-if command -v gio &>/dev/null; then
-    gio set -t stringv "$HOME/Documents" metadata::custom-icon "folder-documents" 2>/dev/null || true
-    gio set -t stringv "$HOME/Downloads" metadata::custom-icon "folder-download" 2>/dev/null || true
-    gio set -t stringv "$HOME/Music" metadata::custom-icon "folder-music" 2>/dev/null || true
-    gio set -t stringv "$HOME/Pictures" metadata::custom-icon "folder-pictures" 2>/dev/null || true
-    gio set -t stringv "$HOME/Videos" metadata::custom-icon "folder-videos" 2>/dev/null || true
-    gio set -t stringv "$HOME/Templates" metadata::custom-icon "folder-templates" 2>/dev/null || true
-    gio set -t stringv "$HOME/Public" metadata::custom-icon "folder-publicshare" 2>/dev/null || true
-    gio set -t stringv "$HOME/Desktop" metadata::custom-icon "user-desktop" 2>/dev/null || true
-fi
-
-# 7. Configure Greetd + Noctalia Greeter
+# 11. Configure Greetd + Noctalia Greeter
 if command -v noctalia-greeter-session &>/dev/null || [ -f /usr/bin/noctalia-greeter-session ]; then
     log_info "Configuring greetd for Noctalia Greeter..."
     GREETER_BIN=$(command -v noctalia-greeter-session 2>/dev/null || echo "/usr/bin/noctalia-greeter-session")
@@ -273,11 +263,9 @@ EOF
     done
     sudo systemctl enable greetd.service
     log_success "greetd.service enabled with graphical.target default."
-else
-    log_warn "noctalia-greeter-session binary not found in PATH; skipping greetd auto-activation."
 fi
 
-# 7. Polkit Rule for NetworkManager (Allow Wi-Fi scanning & control without password prompts)
+# 12. Polkit Rule for NetworkManager (Allow Wi-Fi scanning & control without password prompts)
 log_info "Configuring Polkit rule for NetworkManager..."
 sudo tee /etc/polkit-1/rules.d/50-networkmanager.rules > /dev/null << 'EOF'
 polkit.addRule(function(action, subject) {
@@ -288,7 +276,7 @@ polkit.addRule(function(action, subject) {
 EOF
 log_success "Polkit NetworkManager rule created."
 
-# 8. Verification & Live Restart
+# 13. Verification & Live Restart
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi
@@ -300,4 +288,4 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
 fi
 
 echo ""
-log_success "Installation & configuration complete!"
+log_success "Dotfiles setup complete! All desktop configurations, wallpapers, and styles are applied."

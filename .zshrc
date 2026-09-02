@@ -70,7 +70,7 @@ if command -v starship &>/dev/null; then
     eval "$(starship init zsh)"
 fi
 
-# Run Fastfetch on Interactive Startup
+# Run Fastfetch on interactive startup
 if [[ -o interactive ]] && command -v fastfetch &>/dev/null; then
     fastfetch
 fi

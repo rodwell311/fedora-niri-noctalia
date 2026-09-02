@@ -318,3 +318,5 @@ binds {
     Mod+Shift+P { power-off-monitors; }
     Mod+O repeat=false { toggle-overview; }
 }
+
+include "noctalia.kdl"
