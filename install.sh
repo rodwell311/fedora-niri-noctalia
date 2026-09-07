@@ -276,7 +276,18 @@ polkit.addRule(function(action, subject) {
 EOF
 log_success "Polkit NetworkManager rule created."
 
-# 13. Verification & Live Restart
+# 13. Battery Alert Automation (<= 20% and >= 90%)
+log_info "Configuring battery alert automation..."
+mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user"
+fetch_file "scripts/battery-alert.sh" "$HOME/.local/bin/battery-alert.sh"
+chmod +x "$HOME/.local/bin/battery-alert.sh"
+fetch_file ".config/systemd/user/battery-alert.service" "$HOME/.config/systemd/user/battery-alert.service"
+fetch_file ".config/systemd/user/battery-alert.timer" "$HOME/.config/systemd/user/battery-alert.timer"
+systemctl --user daemon-reload 2>/dev/null || true
+systemctl --user enable --now battery-alert.timer 2>/dev/null || true
+log_success "Battery alert timer enabled."
+
+# 14. Verification & Live Restart
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi

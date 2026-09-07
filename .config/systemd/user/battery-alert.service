@@ -1,0 +1,7 @@
+[Unit]
+Description=Battery threshold alert notification
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/battery-alert.sh
