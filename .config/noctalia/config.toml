@@ -91,7 +91,7 @@ drawer_item_size = 20
 hide_passive = true
 
 [widget.clock]
-format = "{:%d %b  %H:%M}"
+format = "{:%a %b %-d  %H:%M}"
 tooltip_format = "{:%A, %d %B %Y}"
 
 [widget.battery]
