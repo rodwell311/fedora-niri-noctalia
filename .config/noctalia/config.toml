@@ -130,7 +130,7 @@ capsule_opacity    = 0.65
 
 start  = ["fedora-logo", "workspaces", "active_window"]
 center = ["media"]
-end    = ["tray", "cpu-usage", "volume", "brightness", "battery", "network", "clock", "control-center"]
+end    = ["tray", "cpu-usage", "volume", "brightness", "battery", "network", "control-center", "clock"]
 
 [bar.default.dead_zone.actions]
 left   = "panel-toggle launcher"
