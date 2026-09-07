@@ -193,6 +193,7 @@ fetch_file ".config/gtk-4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
 fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
 
 # 9. Set GNOME / GTK System Settings
+gsettings set org.gnome.desktop.interface gtk-theme 'WhiteSur-Dark'
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
 gsettings set org.gnome.desktop.interface cursor-theme 'macOS'
 gsettings set org.gnome.desktop.interface cursor-size 22
