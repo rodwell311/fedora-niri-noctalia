@@ -4,6 +4,7 @@
 
 // Environment variables
 environment {
+    PATH "/home/rodwell/.local/bin:/usr/local/bin:/usr/bin"
     XDG_DATA_DIRS "/home/rodwell/.local/share:/home/rodwell/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share"
     ELECTRON_OZONE_PLATFORM_HINT "auto"
     QT_QPA_PLATFORM "wayland"
@@ -317,7 +318,7 @@ binds {
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
-    Mod+Shift+X hotkey-overlay-title="OCR: Copy text from screen" { spawn "ocr-snip.sh"; }
+    Mod+Shift+X hotkey-overlay-title="OCR: Copy text from screen" { spawn-sh "ocr-snip.sh"; }
 
     // Emergency Inhibit
     Ctrl+Alt+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }

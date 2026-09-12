@@ -3,6 +3,7 @@
 # OCR Screen Snippet to Clipboard
 # Select region with slurp -> capture with grim -> OCR with tesseract -> wl-copy
 # ==============================================================================
+export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:$PATH"
 
 # 1. Select screen region using slurp
 GEOM=$(slurp -b "#00000066" -c "#89b4fa" -w 2 2>/dev/null)
