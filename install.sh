@@ -107,7 +107,12 @@ sudo dnf install -y --skip-unavailable \
     nautilus \
     fontawesome-fonts \
     mesa-dri-drivers \
-    vulkan-loader
+    vulkan-loader \
+    grim \
+    slurp \
+    tesseract \
+    tesseract-langpack-ind \
+    wl-clipboard
 
 # Install Noctalia & Greeter packages
 sudo dnf install -y --skip-unavailable noctalia noctalia-greeter 2>/dev/null || \
@@ -277,16 +282,18 @@ polkit.addRule(function(action, subject) {
 EOF
 log_success "Polkit NetworkManager rule created."
 
-# 13. Battery Alert Automation (<= 20% and >= 90%)
-log_info "Configuring battery alert automation..."
+# 13. Battery Alert & OCR Utilities Automation
+log_info "Configuring battery alert and OCR utilities..."
 mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user"
 fetch_file "scripts/battery-alert.sh" "$HOME/.local/bin/battery-alert.sh"
 chmod +x "$HOME/.local/bin/battery-alert.sh"
+fetch_file "scripts/ocr-snip.sh" "$HOME/.local/bin/ocr-snip.sh"
+chmod +x "$HOME/.local/bin/ocr-snip.sh"
 fetch_file ".config/systemd/user/battery-alert.service" "$HOME/.config/systemd/user/battery-alert.service"
 fetch_file ".config/systemd/user/battery-alert.timer" "$HOME/.config/systemd/user/battery-alert.timer"
 systemctl --user daemon-reload 2>/dev/null || true
 systemctl --user enable --now battery-alert.timer 2>/dev/null || true
-log_success "Battery alert timer enabled."
+log_success "Battery alert and OCR scripts deployed."
 
 # 14. Fix GTK Dialog Size & ONLYOFFICE Portal Integration
 log_info "Configuring sensible GTK file-chooser window size..."
