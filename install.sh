@@ -288,7 +288,16 @@ systemctl --user daemon-reload 2>/dev/null || true
 systemctl --user enable --now battery-alert.timer 2>/dev/null || true
 log_success "Battery alert timer enabled."
 
-# 14. Verification & Live Restart
+# 14. Fix GTK Dialog Size & ONLYOFFICE Portal Integration
+log_info "Configuring sensible GTK file-chooser window size..."
+command -v dconf &>/dev/null && dconf write /org/gtk/settings/file-chooser/window-size "(860, 560)" || true
+if [ -f /usr/share/applications/onlyoffice-desktopeditors.desktop ]; then
+    mkdir -p "$HOME/.local/share/applications"
+    cp /usr/share/applications/onlyoffice-desktopeditors.desktop "$HOME/.local/share/applications/"
+    sed -i 's|Exec=/usr/bin/onlyoffice-desktopeditors|Exec=/usr/bin/onlyoffice-desktopeditors --xdg-desktop-portal|g' "$HOME/.local/share/applications/onlyoffice-desktopeditors.desktop"
+fi
+
+# 15. Verification & Live Restart
 if command -v niri &>/dev/null; then
     niri validate 2>/dev/null && log_success "Niri config validation passed." || log_warn "Niri config syntax check returned warnings."
 fi

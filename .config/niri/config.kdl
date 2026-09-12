@@ -133,9 +133,15 @@ window-rule {
     match app-id="pavucontrol"
     match app-id="blueman-manager"
     match app-id="org.gnome.FileRoller"
+    match app-id=r#"^xdg-desktop-portal"#
     match title="Open File"
     match title="Save As"
+    match title="Save File"
+    match title="Open Folder"
+    match title="Choose Files"
     open-floating true
+    default-column-width { fixed 860; }
+    default-window-height { fixed 560; }
 }
 
 window-rule {
