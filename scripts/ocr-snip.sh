@@ -9,10 +9,14 @@ export PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:$PATH"
 GEOM=$(slurp -b "#00000066" -c "#89b4fa" -w 2 2>/dev/null)
 [ -z "$GEOM" ] && exit 0
 
-# 2. Capture and OCR directly via in-memory pipe
-TEXT=$(grim -g "$GEOM" -t png - 2>/dev/null | tesseract stdin stdout -l eng+ind 2>/dev/null)
+# 2. Detect all installed language models (auto-combines eng, ind, cjk, ara, etc.)
+LANGS=$(tesseract --list-langs 2>/dev/null | awk 'NR>1 && $1 != "osd"' | paste -sd+ -)
+[ -z "$LANGS" ] && LANGS="eng"
 
-# 3. Clean leading/trailing blank lines
+# 3. Capture and OCR directly via in-memory pipe
+TEXT=$(grim -g "$GEOM" -t png - 2>/dev/null | tesseract stdin stdout -l "$LANGS" 2>/dev/null)
+
+# 4. Clean leading/trailing blank lines
 CLEANED_TEXT=$(echo "$TEXT" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
 # 4. Copy to clipboard and notify

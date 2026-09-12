@@ -112,6 +112,12 @@ sudo dnf install -y --skip-unavailable \
     slurp \
     tesseract \
     tesseract-langpack-ind \
+    tesseract-langpack-ara \
+    tesseract-langpack-jpn \
+    tesseract-langpack-kor \
+    tesseract-langpack-chi_sim \
+    tesseract-langpack-chi_tra \
+    tesseract-equ \
     wl-clipboard
 
 # Install Noctalia & Greeter packages
