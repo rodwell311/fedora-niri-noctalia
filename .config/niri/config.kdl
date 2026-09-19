@@ -196,12 +196,8 @@ hotkey-overlay {
 // Autostart background processes
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets,pkcs11,ssh"
 spawn-at-startup "noctalia"
-spawn-at-startup "swayidle" "-w" \
-    "timeout" "300" "noctalia msg session lock" \
-    "timeout" "360" "niri msg action power-off-monitors" \
-    "resume" "niri msg action power-on-monitors" \
-    "timeout" "900" "systemctl suspend" \
-    "before-sleep" "noctalia msg session lock"
+// Idle & Sleep management is handled by systemd user services:
+// swayidle-idle.service, swayidle-sleep.service, and media-idle-guard.service
 
 // Keybindings
 binds {
@@ -319,6 +315,9 @@ binds {
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
     Mod+Shift+X hotkey-overlay-title="OCR: Copy text from screen" { spawn-sh "ocr-snip.sh"; }
+
+    // Idle / Sleep Guard Toggle
+    Mod+Shift+I hotkey-overlay-title="Toggle Idle/Sleep Inhibit" { spawn-sh "systemctl --user is-active --quiet media-idle-guard.service && systemctl --user stop media-idle-guard.service swayidle-idle.service swayidle-sleep.service && notify-send -i preferences-desktop-screensaver 'Idle Guard' 'Sleep & Idle DISABLED (Stay Awake)' || (systemctl --user start media-idle-guard.service swayidle-idle.service swayidle-sleep.service && notify-send -i preferences-desktop-screensaver 'Idle Guard' 'Sleep & Idle ENABLED (Automatic)')"; }
 
     // Emergency Inhibit
     Ctrl+Alt+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }

@@ -288,18 +288,24 @@ polkit.addRule(function(action, subject) {
 EOF
 log_success "Polkit NetworkManager rule created."
 
-# 13. Battery Alert & OCR Utilities Automation
-log_info "Configuring battery alert and OCR utilities..."
+# 13. Battery Alert, OCR Utilities, and Smart Media-Aware Idle Automation
+log_info "Configuring battery alert, OCR utilities, and media-aware idle guard..."
 mkdir -p "$HOME/.local/bin" "$HOME/.config/systemd/user"
 fetch_file "scripts/battery-alert.sh" "$HOME/.local/bin/battery-alert.sh"
 chmod +x "$HOME/.local/bin/battery-alert.sh"
 fetch_file "scripts/ocr-snip.sh" "$HOME/.local/bin/ocr-snip.sh"
 chmod +x "$HOME/.local/bin/ocr-snip.sh"
+fetch_file "scripts/media-idle-guard.sh" "$HOME/.local/bin/media-idle-guard.sh"
+chmod +x "$HOME/.local/bin/media-idle-guard.sh"
 fetch_file ".config/systemd/user/battery-alert.service" "$HOME/.config/systemd/user/battery-alert.service"
 fetch_file ".config/systemd/user/battery-alert.timer" "$HOME/.config/systemd/user/battery-alert.timer"
+fetch_file ".config/systemd/user/swayidle-idle.service" "$HOME/.config/systemd/user/swayidle-idle.service"
+fetch_file ".config/systemd/user/swayidle-sleep.service" "$HOME/.config/systemd/user/swayidle-sleep.service"
+fetch_file ".config/systemd/user/media-idle-guard.service" "$HOME/.config/systemd/user/media-idle-guard.service"
 systemctl --user daemon-reload 2>/dev/null || true
 systemctl --user enable --now battery-alert.timer 2>/dev/null || true
-log_success "Battery alert and OCR scripts deployed."
+systemctl --user enable --now swayidle-idle.service swayidle-sleep.service media-idle-guard.service 2>/dev/null || true
+log_success "Battery alert, OCR, and smart media-aware idle guard deployed."
 
 # 14. Fix GTK Dialog Size & ONLYOFFICE Portal Integration
 log_info "Configuring sensible GTK file-chooser window size..."

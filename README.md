@@ -25,7 +25,11 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
   * Terminal: **Alacritty** (Borderles, 85% opacity, SF Mono, Noctalia live color sync).
   * Shell: **Zsh** + **Starship Prompt** (Catppuccin 2-line prompt) + Fastfetch compact system info on launch + Auto-suggestions & Syntax-highlighting.
 * **Power & Idle Automation**:
-  * **swayidle**: Auto-lock screen at 5 min, Screen DPMS off at 6 min (wakes on input), Auto-suspend at 15 min, lock before sleep.
+  * **Smart Media-Aware Idle Guard**: Otomatis mendeteksi pemutaran media via MPRIS & Niri:
+    * **Video Aktif (Fullscreen/Focused)**: Layar tidak terkunci, DPMS tidak mati, dan laptop tidak sleep.
+    * **Audio Latar (Musik/Podcast)**: Layar bisa terkunci (5 menit) & padam (6 menit) untuk menghemat baterai, namun laptop **dilarang sleep** sehingga pemutaran audio tidak terputus.
+    * **Idle (Tanpa Media)**: Kunci layar di 5 menit, DPMS mati di 6 menit, suspend otomatis di 15 menit.
+  * **Manual Inhibit Toggle**: Pintasan cepat `Mod + Shift + I` untuk menonaktifkan/mengaktifkan kembali idle guard secara manual (misal saat presentasi).
 * **Privilege & Network**:
   * Polkit rule untuk NetworkManager Wi-Fi scanning tanpa prompt password admin.
 
@@ -52,6 +56,13 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
 │   │   │   └── fedora.svg          # Simple-icons Fedora monochrome launcher logo
 │   │   └── palettes/
 │   │       └── CatppuccinCustom.json # High-contrast tooltip/popover palette
+│   ├── systemd/
+│   │   └── user/
+│   │       ├── battery-alert.service  # Notifikasi ambang batas baterai (20% & 90%)
+│   │       ├── battery-alert.timer    # Timer interval cek baterai
+│   │       ├── media-idle-guard.service # Daemon pengawas media idle Wayland
+│   │       ├── swayidle-idle.service  # Service khusus lock (5m) & DPMS off (6m)
+│   │       └── swayidle-sleep.service # Service khusus auto-suspend (15m)
 │   └── starship.toml               # Catppuccin prompt configuration
 ├── .local/
 │   └── state/
@@ -61,6 +72,10 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
 │   └── walls/
 │       ├── wallpaper.png           # Default 4K desktop wallpaper
 │       └── avatar.jpg              # Lockscreen / profile picture
+├── scripts/
+│   ├── battery-alert.sh            # Pengecekan baterai & notifikasi
+│   ├── media-idle-guard.sh         # Skrip logika media idle guard
+│   └── ocr-snip.sh                 # Screen snip to clipboard OCR (Tesseract)
 ├── .zshrc                          # Zsh configuration, aliases, plugins
 ├── install.sh                      # One-liner automated installation script
 └── README.md
@@ -98,6 +113,8 @@ chmod +x install.sh
 | `Mod + V` | Buka Clipboard Manager History (**Noctalia**) |
 | `Mod + Escape` | Buka Power & Session Menu (**Noctalia**) |
 | `Mod + Shift + Return` | Buka Wallpaper Picker (**Noctalia**) |
+| `Mod + Shift + X` | OCR Screenshot: Salin teks dari layar ke clipboard |
+| `Mod + Shift + I` | Toggle Mode Manual Idle / Sleep Inhibit (Stay Awake) |
 | `Mod + Q` | Tutup Window Aktif |
 | `Mod + Left / Right` | Fokus Kolom Kiri / Kanan |
 | `Mod + Shift + Left / Right` | Pindahkan Kolom Window ke Kiri / Kanan |

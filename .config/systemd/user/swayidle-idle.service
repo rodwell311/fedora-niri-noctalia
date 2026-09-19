@@ -1,0 +1,13 @@
+[Unit]
+Description=Idle screen lock and display power-off
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash -c 'export WAYLAND_DISPLAY=$(ls "${XDG_RUNTIME_DIR}" 2>/dev/null | grep -m1 "^wayland-" || echo "wayland-1"); exec swayidle -w timeout 300 "noctalia msg session lock" timeout 360 "niri msg action power-off-monitors" resume "niri msg action power-on-monitors" before-sleep "noctalia msg session lock"'
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
