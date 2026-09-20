@@ -56,6 +56,9 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
 │   │   │   └── fedora.svg          # Simple-icons Fedora monochrome launcher logo
 │   │   └── palettes/
 │   │       └── CatppuccinCustom.json # High-contrast tooltip/popover palette
+│   ├── pipewire/
+│   │   └── pipewire-pulse.conf.d/
+│   │       └── 50-block-source-volume.conf # Lock mic volume from WebRTC/browser auto-decrease
 │   ├── systemd/
 │   │   └── user/
 │   │       ├── battery-alert.service  # Notifikasi ambang batas baterai (20% & 90%)

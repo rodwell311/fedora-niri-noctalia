@@ -201,6 +201,7 @@ fetch_file ".config/noctalia/palettes/CatppuccinCustom.json" "$HOME/.config/noct
 fetch_file ".config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
 fetch_file ".config/gtk-3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 fetch_file ".config/gtk-4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+fetch_file ".config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf" "$HOME/.config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf"
 fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
 
 # 9. Set GNOME / GTK System Settings
