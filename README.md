@@ -78,7 +78,8 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
 ├── scripts/
 │   ├── battery-alert.sh            # Pengecekan baterai & notifikasi
 │   ├── media-idle-guard.sh         # Skrip logika media idle guard
-│   └── ocr-snip.sh                 # Screen snip to clipboard OCR (Tesseract)
+│   ├── ocr-snip.sh                 # Screen snip to clipboard OCR (Tesseract)
+│   └── reset-mic-state.sh          # Reset & recovery persistent state mic WirePlumber
 ├── .zshrc                          # Zsh configuration, aliases, plugins
 ├── install.sh                      # One-liner automated installation script
 └── README.md
