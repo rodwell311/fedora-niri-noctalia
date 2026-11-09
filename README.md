@@ -35,53 +35,55 @@ Repository dotfiles & automated deployment script untuk lingkungan desktop Wayla
 
 ---
 
+## 🔁 Full Reinstall Parity
+
+Repo ini adalah backup lengkap. Setelah reinstall Fedora, jalankan `install.sh` dan semua berikut ikut dipulihkan:
+
+* Berkas konfigurasi Niri, Noctalia, Alacritty, btop, CAVA, GTK, PipeWire, Starship, dan Zsh.
+* Font SF Pro dan SF Mono (dibundel di `assets/fonts`, tidak perlu unduh pihak ketiga).
+* Wallpaper desktop dan avatar lockscreen (dibundel di `assets/walls`).
+* Unit systemd user: swayidle idle/sleep, media-idle-guard, dan battery-alert.
+* Entri autostart aplikasi pendukung.
+* Dukungan tombol **Caffeine** Noctalia yang menonaktifkan lock, DPMS, dan suspend.
+
+---
+
 ## 📂 Repository Structure
 
 ```text
 .
+├── assets/
+│   ├── fonts/SF-Pro/               # 47 berkas SF Pro (Display, Text, Rounded)
+│   ├── fonts/SF-Mono/              # 12 berkas SF Mono
+│   └── walls/                      # Wallpaper one.jpg + avatar lockscreen
 ├── .config/
 │   ├── alacritty/
-│   │   └── alacritty.toml          # Alacritty terminal config
-│   ├── fastfetch/
-│   │   └── config.jsonc            # Compact fastfetch system spec format
-│   ├── gtk-3.0/
-│   │   └── settings.ini            # GTK 3 SF Pro & WhiteSur settings
-│   ├── gtk-4.0/
-│   │   └── settings.ini            # GTK 4 SF Pro & WhiteSur settings
+│   │   ├── alacritty.toml          # Terminal config (SF Mono, opacity 0.85)
+│   │   └── themes/noctalia.toml    # Palet warna terminal hasil template Noctalia
+│   ├── autostart/                  # NetBird, AB Download Manager, Warp Taskbar
+│   ├── btop/
+│   │   ├── btop.conf               # Konfigurasi btop
+│   │   └── themes/noctalia.theme   # Tema btop generatif Noctalia
+│   ├── cava/
+│   │   ├── config                  # Konfigurasi visualizer CAVA
+│   │   └── shaders/                # Shader bar_spectrum & northern_lights
+│   ├── fastfetch/config.jsonc      # Fastfetch ringkas saat terminal dibuka
+│   ├── gtk-3.0/settings.ini        # GTK 3 SF Pro & WhiteSur
+│   ├── gtk-4.0/settings.ini        # GTK 4 SF Pro & WhiteSur
 │   ├── niri/
-│   │   └── config.kdl              # Niri WM layout, binds, cursor, animations
+│   │   ├── config.kdl              # Layout, binds, cursor, autostart
+│   │   └── noctalia.kdl            # Warna focus ring, border, tab indicator
 │   ├── noctalia/
-│   │   ├── config.toml             # Noctalia top bar & widget layout
-│   │   ├── icons/
-│   │   │   └── fedora.svg          # Simple-icons Fedora monochrome launcher logo
-│   │   └── palettes/
-│   │       └── CatppuccinCustom.json # High-contrast tooltip/popover palette
-│   ├── pipewire/
-│   │   └── pipewire-pulse.conf.d/
-│   │       └── 50-block-source-volume.conf # Lock mic volume from WebRTC/browser auto-decrease
-│   ├── systemd/
-│   │   └── user/
-│   │       ├── battery-alert.service  # Notifikasi ambang batas baterai (20% & 90%)
-│   │       ├── battery-alert.timer    # Timer interval cek baterai
-│   │       ├── media-idle-guard.service # Daemon pengawas media idle Wayland
-│   │       ├── swayidle-idle.service  # Service khusus lock (5m) & DPMS off (6m)
-│   │       └── swayidle-sleep.service # Service khusus auto-suspend (15m)
-│   └── starship.toml               # Catppuccin prompt configuration
-├── .local/
-│   └── state/
-│       └── noctalia/
-│           └── settings.toml       # Noctalia UI runtime state (dock, wallpapers, schemes)
-├── pictures/
-│   └── walls/
-│       ├── wallpaper.png           # Default 4K desktop wallpaper
-│       └── avatar.jpg              # Lockscreen / profile picture
-├── scripts/
-│   ├── battery-alert.sh            # Pengecekan baterai & notifikasi
-│   ├── media-idle-guard.sh         # Skrip logika media idle guard
-│   ├── ocr-snip.sh                 # Screen snip to clipboard OCR (Tesseract)
-│   └── reset-mic-state.sh          # Reset & recovery persistent state mic WirePlumber
-├── .zshrc                          # Zsh configuration, aliases, plugins
-├── install.sh                      # One-liner automated installation script
+│   │   ├── config.toml             # Top bar 26px & widget layout
+│   │   ├── icons/fedora.svg        # Logo launcher monokrom
+│   │   └── palettes/CatppuccinCustom.json
+│   ├── pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf
+│   ├── systemd/user/               # swayidle, media-idle-guard, battery-alert
+│   └── starship.toml               # Prompt Starship (palet noctalia)
+├── .local/state/noctalia/settings.toml  # Dock, widget lockscreen, wallpaper, tema
+├── scripts/                        # battery-alert, media-idle-guard, ocr-snip, reset-mic-state
+├── .zshrc                          # Zsh, alias, plugin, fastfetch saat login
+├── install.sh                      # Installer otomatis satu perintah
 └── README.md
 ```
 
