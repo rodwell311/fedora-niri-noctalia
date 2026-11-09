@@ -74,3 +74,9 @@ fi
 if [[ -o interactive ]] && command -v fastfetch &>/dev/null; then
     fastfetch
 fi
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/rodwell/.local/bin:$PATH"
+
+alias fix-server="sudo ip route replace 192.168.1.2/32 dev wt0"

@@ -132,26 +132,17 @@ if ! command -v brave-origin &>/dev/null && ! command -v brave-browser &>/dev/nu
     curl -fsS https://dl.brave.com/install.sh | FLAVOR=origin sh || true
 fi
 
-# 4. Deploy Apple SF Pro & SF Mono Fonts
-log_info "Installing Apple SF Pro and SF Mono fonts..."
+# 4. Deploy Apple SF Pro & SF Mono Fonts (bundled in repo)
+log_info "Installing Apple SF Pro and SF Mono fonts from repo assets..."
 mkdir -p "$HOME/.local/share/fonts/SF-Pro" "$HOME/.local/share/fonts/SF-Mono"
-if [ ! -f "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf" ]; then
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Regular.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Medium.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Semibold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Semibold.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Bold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Display-Bold.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Regular.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Regular.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Medium.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Medium.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Semibold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Semibold.otf"
-    curl -fSL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Bold.otf" -o "$HOME/.local/share/fonts/SF-Pro/SF-Pro-Text-Bold.otf"
-fi
-
-if [ ! -f "$HOME/.local/share/fonts/SF-Mono/SF-Mono-Regular.otf" ]; then
-    rm -rf /tmp/sf-mono && git clone --depth=1 https://github.com/ZulwiyozaPutra/SF-Mono-Font.git /tmp/sf-mono 2>/dev/null || true
-    cp /tmp/sf-mono/*.otf "$HOME/.local/share/fonts/SF-Mono/" 2>/dev/null || true
-    rm -rf /tmp/sf-mono
-fi
-fc-cache -f "$HOME/.local/share/fonts"
+for f in SF-Pro-Display-Regular.otf SF-Pro-Display-Bold.otf SF-Pro-Rounded-Regular.otf SF-Pro-Rounded-Bold.otf; do
+    fetch_file "assets/fonts/SF-Pro/$f" "$HOME/.local/share/fonts/SF-Pro/$f" || true
+done
+fetch_file "assets/fonts/SF-Pro/SF-Pro.ttf" "$HOME/.local/share/fonts/SF-Pro/SF-Pro.ttf" || true
+for f in SFMono-Regular.otf SFMono-Medium.otf SFMono-Semibold.otf SFMono-Bold.otf SFMono-RegularItalic.otf SFMono-MediumItalic.otf; do
+    fetch_file "assets/fonts/SF-Mono/$f" "$HOME/.local/share/fonts/SF-Mono/$f" || true
+done
+fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
 
 # 5. Deploy WhiteSur Icon Theme & macOS Cursor Theme
 log_info "Installing WhiteSur icon theme and macOS cursor..."
@@ -174,8 +165,8 @@ fi
 # 6. Deploy Wallpapers and Profile Avatar
 log_info "Deploying wallpapers and avatars to ~/Pictures/walls/..."
 mkdir -p "$HOME/Pictures/walls"
-fetch_file "pictures/walls/wallpaper.png" "$HOME/Pictures/walls/26668334.png"
-fetch_file "pictures/walls/avatar.jpg" "$HOME/Pictures/walls/hiyuki_profile.jpg"
+fetch_file "assets/walls/one.jpg" "$HOME/Pictures/walls/one.jpg"
+fetch_file "assets/walls/hiyuk_profile2.jpg" "$HOME/Pictures/walls/hiyuk_profile2.jpg"
 
 # 7. Deploy Starship Prompt & Shell Configurations
 log_info "Setting up Starship prompt and Zsh environment..."
@@ -184,6 +175,7 @@ if ! command -v starship &>/dev/null; then
 fi
 
 fetch_file ".zshrc" "$HOME/.zshrc"
+chmod 644 "$HOME/.zshrc"
 fetch_file ".config/starship.toml" "$HOME/.config/starship.toml"
 fetch_file ".config/fastfetch/config.jsonc" "$HOME/.config/fastfetch/config.jsonc"
 
@@ -203,6 +195,17 @@ fetch_file ".config/gtk-3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 fetch_file ".config/gtk-4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
 fetch_file ".config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf" "$HOME/.config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf"
 fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
+fetch_file ".config/niri/noctalia.kdl" "$HOME/.config/niri/noctalia.kdl"
+fetch_file ".config/alacritty/themes/noctalia.toml" "$HOME/.config/alacritty/themes/noctalia.toml"
+fetch_file ".config/btop/btop.conf" "$HOME/.config/btop/btop.conf"
+fetch_file ".config/btop/themes/noctalia.theme" "$HOME/.config/btop/themes/noctalia.theme"
+fetch_file ".config/cava/config" "$HOME/.config/cava/config"
+for f in bar_spectrum.frag northern_lights.frag pass_through.vert; do
+    fetch_file ".config/cava/shaders/$f" "$HOME/.config/cava/shaders/$f"
+done
+for f in netbird.desktop com.abdownloadmanager.desktop com.cloudflare.WarpTaskbar.desktop; do
+    fetch_file ".config/autostart/$f" "$HOME/.config/autostart/$f" || true
+done
 
 # 9. Set GNOME / GTK System Settings
 gsettings set org.gnome.desktop.interface gtk-theme 'WhiteSur-Dark'

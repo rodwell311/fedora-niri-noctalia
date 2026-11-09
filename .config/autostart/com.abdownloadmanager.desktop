@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AB Download Manager
+Exec="/home/rodwell/.local/ABDownloadManager/bin/ABDownloadManager" --background
+Icon=/home/rodwell/.local/ABDownloadManager/lib/ABDownloadManager.png
+Terminal=false
+NoDisplay=true
