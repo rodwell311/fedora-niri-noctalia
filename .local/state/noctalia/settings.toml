@@ -1,9 +1,9 @@
-config_version = 13
+config_version = 16
 
 [dock]
 enabled = true
 icon_size = 28
-pinned = [ "brave-origin", "dev.noctalia.Noctalia" ]
+pinned = [ "brave-origin", "org.telegram.desktop", "com.nousresearch.hermes" ]
 reserve_space = false
 show_dots = true
 smart_auto_hide = true
@@ -12,28 +12,35 @@ smart_auto_hide = true
 auto_locate = true
 
 [lockscreen_widgets]
-enabled = false
+enabled = true
 schema_version = 2
-widget_order = [ "lockscreen-login-box@eDP-1" ]
+widget_order = [
+    "lockscreen-widget-date@eDP-1",
+    "lockscreen-widget-clock@eDP-1",
+    "lockscreen-login-box@eDP-1",
+    "lockscreen-widget-date@HDMI-A-1",
+    "lockscreen-widget-clock@HDMI-A-1",
+    "lockscreen-login-box@HDMI-A-1"
+]
 
     [lockscreen_widgets.grid]
     cell_size = 16
     major_interval = 4
     visible = true
 
-    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
     box_height = 196.0
     box_width = 810.0
-    cx = 683.0
-    cy = 586.0
-    output = "eDP-1"
-    placement_height = 768.0
-    placement_width = 1366.0
+    cx = 960.0
+    cy = 898.0
+    output = "HDMI-A-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "login_box"
 
-        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
-        background_color = "surface_variant"
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_container"
         background_opacity = 0.88
         background_radius = 12.0
         center_password_text = false
@@ -48,11 +55,121 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
         show_unlock_hint = true
         show_weather = true
 
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 683.0
+    cy = 586.0
+    output = "eDP-1"
+    placement_height = 768.0
+    placement_width = 1366.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_container"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-widget-clock@HDMI-A-1"]
+    box_height = 180.0
+    box_width = 680.0
+    cx = 960.0
+    cy = 272.0
+    output = "HDMI-A-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-widget-clock@HDMI-A-1".settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        color = "on_surface"
+        font_family = "SF Pro Rounded"
+        format = "{:%H:%M}"
+        shadow = true
+
+    [lockscreen_widgets.widget."lockscreen-widget-clock@eDP-1"]
+    box_height = 136.0
+    box_width = 520.0
+    cx = 683.0
+    cy = 196.0
+    output = "eDP-1"
+    placement_height = 768.0
+    placement_width = 1366.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-widget-clock@eDP-1".settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        color = "on_surface"
+        font_family = "SF Pro Rounded"
+        format = "{:%H:%M}"
+        shadow = true
+
+    [lockscreen_widgets.widget."lockscreen-widget-date@HDMI-A-1"]
+    box_height = 42.0
+    box_width = 560.0
+    cx = 960.0
+    cy = 148.0
+    output = "HDMI-A-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-widget-date@HDMI-A-1".settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        color = "on_surface"
+        font_family = "SF Pro Display"
+        format = "{:%A, %d %B}"
+        shadow = true
+
+    [lockscreen_widgets.widget."lockscreen-widget-date@eDP-1"]
+    box_height = 32.0
+    box_width = 420.0
+    cx = 683.0
+    cy = 104.0
+    output = "eDP-1"
+    placement_height = 768.0
+    placement_width = 1366.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-widget-date@eDP-1".settings]
+        background = false
+        center_text = true
+        clock_style = "digital"
+        color = "on_surface"
+        font_family = "SF Pro Display"
+        format = "{:%A, %d %B}"
+        shadow = true
+
 [shell]
-avatar_path = "/home/rodwell/Pictures/walls/hiyuki_profile.jpg"
+avatar_path = "/home/rodwell/Pictures/walls/hiyuk_profile2.jpg"
 
     [shell.greeter_sync]
     auto_sync = true
+
+    [shell.launcher]
+    app_grid = true
 
     [shell.panel]
     clipboard_placement = "attached"
@@ -62,6 +179,7 @@ avatar_path = "/home/rodwell/Pictures/walls/hiyuki_profile.jpg"
 [theme]
 builtin = "Kanagawa"
 community_palette = "ADW"
+custom_palette = "CatppuccinCustom"
 mode = "dark"
 source = "wallpaper"
 wallpaper_scheme = "m3-content"
@@ -74,13 +192,13 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rodwell/Pictures/walls"
 
     [wallpaper.default]
-    path = "/home/rodwell/Pictures/walls/26668334.png"
+    path = "/home/rodwell/Pictures/walls/one.jpg"
 
     [wallpaper.last]
-    path = "/home/rodwell/Pictures/walls/26668334.png"
+    path = "/home/rodwell/Pictures/walls/one.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rodwell/Pictures/walls/26668334.png"
+    path = "/home/rodwell/Pictures/walls/one.jpg"
 
     [[wallpaper.favorite]]
     palette_source = "wallpaper"

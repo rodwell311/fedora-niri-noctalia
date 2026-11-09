@@ -43,6 +43,12 @@ echo "[media-idle-guard] Service started, monitoring MPRIS & Niri state..."
 while true; do
     resolve_niri_env
 
+    # 0. Check Caffeine / system idle inhibitor
+    is_caffeine=false
+    if systemd-inhibit --list --no-legend 2>/dev/null | grep -iE "caffeine|noctalia.*idle" >/dev/null; then
+        is_caffeine=true
+    fi
+
     # 1. Gather all MPRIS players
     mapfile -t players < <(playerctl -l 2>/dev/null || true)
 
@@ -60,7 +66,9 @@ while true; do
 
     target_mode="idle"
 
-    if [[ "$has_media_playing" == true ]]; then
+    if [[ "$is_caffeine" == true ]]; then
+        target_mode="caffeine"
+    elif [[ "$has_media_playing" == true ]]; then
         is_video=false
         focused_app=""
         is_any_fullscreen=false
@@ -128,6 +136,10 @@ while true; do
     # Apply state transitions only when changed
     if [[ "$target_mode" != "$current_mode" ]]; then
         case "$target_mode" in
+            "caffeine")
+                systemctl --user stop swayidle-idle.service swayidle-sleep.service 2>/dev/null || true
+                echo "[media-idle-guard] State -> CAFFEINE (screen lock, DPMS, and sleep inhibited)"
+                ;;
             "video")
                 systemctl --user stop swayidle-idle.service swayidle-sleep.service 2>/dev/null || true
                 echo "[media-idle-guard] State -> VIDEO (no lock, no DPMS, no sleep)"
