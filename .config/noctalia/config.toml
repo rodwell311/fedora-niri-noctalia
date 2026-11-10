@@ -149,3 +149,9 @@ type = "vdir"
 name = "Personal"
 color = "#ffb4ab"
 path = "/home/rodwell/.local/share/calendars/personal"
+
+[plugins]
+enabled = [ "noctalia/notes" ]
+
+[plugin_settings."noctalia/notes"]
+notes_dir = "$XDG_DOCUMENTS_DIR/QuickNotes"

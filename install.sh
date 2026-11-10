@@ -229,7 +229,7 @@ EOF
 
 # 10. Configure User Directories
 log_info "Setting up XDG user directories and icons..."
-mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Videos" "$HOME/Templates" "$HOME/Public"
+mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Documents/QuickNotes" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Videos" "$HOME/Templates" "$HOME/Public"
 
 printf "%s\n" \
     "XDG_DESKTOP_DIR=\"\$HOME/Desktop\"" \

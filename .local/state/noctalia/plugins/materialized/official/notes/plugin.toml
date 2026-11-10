@@ -14,7 +14,7 @@ key = "notes_dir"
 type = "folder"
 label_key = "settings.notes_dir.label"
 description_key = "settings.notes_dir.description"
-default = "$XDG_DOCUMENTS_DIR/Notes"
+default = "$XDG_DOCUMENTS_DIR/QuickNotes"
 
 [[setting]]
 key = "extension"
