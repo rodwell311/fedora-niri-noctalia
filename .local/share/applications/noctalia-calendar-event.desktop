@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Add Calendar Event
+Comment=Tambah event dan tanda tanggal di kalender Noctalia
+Exec=/home/rodwell/.local/bin/noctalia-calendar-event --gui
+Icon=x-office-calendar
+Terminal=false
+Type=Application
+Categories=Office;Calendar;Utility;
+Keywords=calendar;event;schedule;agenda;noctalia;

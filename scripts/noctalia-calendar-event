@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""
+noctalia-calendar-event: Manager for Noctalia Calendar events and date markers.
+Generates RFC 5545 iCalendar (.ics) files into ~/.local/share/calendars/personal/.
+"""
+
+import sys
+import os
+import uuid
+import datetime
+import argparse
+import subprocess
+import re
+
+CALENDAR_DIR = os.path.expanduser("~/.local/share/calendars/personal")
+
+def ensure_calendar_dir():
+    os.makedirs(CALENDAR_DIR, exist_ok=True)
+
+def sanitize_filename(text):
+    clean = re.sub(r"[^a-zA-Z0-9_\-]+", "-", text.strip().lower())
+    return clean[:40] if clean else "event"
+
+def create_event(summary, date_str, time_str="09:00", duration_minutes=60, description="", location=""):
+    ensure_calendar_dir()
+    event_id = str(uuid.uuid4())
+    now_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    
+    # Parse date
+    try:
+        event_date = datetime.date.fromisoformat(date_str)
+    except ValueError:
+        raise ValueError(f"Format tanggal tidak valid: {date_str}. Gunakan format YYYY-MM-DD.")
+
+    is_all_day = time_str.lower().strip() in ["all-day", "allday", "all_day", "seharian", ""]
+
+    if is_all_day:
+        dt_start = event_date.strftime("%Y%m%d")
+        dt_end = (event_date + datetime.timedelta(days=1)).strftime("%Y%m%d")
+        lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Noctalia//CalendarEventHelper//EN",
+            "BEGIN:VEVENT",
+            f"UID:{event_id}",
+            f"DTSTAMP:{now_utc}",
+            f"DTSTART;VALUE=DATE:{dt_start}",
+            f"DTEND;VALUE=DATE:{dt_end}",
+            f"SUMMARY:{summary.strip()}",
+        ]
+    else:
+        # Parse time
+        try:
+            time_parts = time_str.strip().split(":")
+            hour = int(time_parts[0])
+            minute = int(time_parts[1]) if len(time_parts) > 1 else 0
+            start_dt = datetime.datetime.combine(event_date, datetime.time(hour, minute))
+            end_dt = start_dt + datetime.timedelta(minutes=duration_minutes)
+        except Exception:
+            raise ValueError(f"Format waktu tidak valid: {time_str}. Gunakan format HH:MM atau all-day.")
+
+        dt_start = start_dt.strftime("%Y%m%dT%H%M%S")
+        dt_end = end_dt.strftime("%Y%m%dT%H%M%S")
+        lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Noctalia//CalendarEventHelper//EN",
+            "BEGIN:VEVENT",
+            f"UID:{event_id}",
+            f"DTSTAMP:{now_utc}",
+            f"DTSTART:{dt_start}",
+            f"DTEND:{dt_end}",
+            f"SUMMARY:{summary.strip()}",
+        ]
+
+    if description.strip():
+        lines.append(f"DESCRIPTION:{description.strip()}")
+    if location.strip():
+        lines.append(f"LOCATION:{location.strip()}")
+
+    lines.extend([
+        "STATUS:CONFIRMED",
+        "END:VEVENT",
+        "END:VCALENDAR",
+        ""
+    ])
+
+    filename = f"{event_date.strftime("%Y%m%d")}_{sanitize_filename(summary)}_{event_id[:8]}.ics"
+    filepath = os.path.join(CALENDAR_DIR, filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\r\n".join(lines))
+
+    return filepath, event_id
+
+def list_events():
+    ensure_calendar_dir()
+    files = [f for f in os.listdir(CALENDAR_DIR) if f.endswith(".ics")]
+    if not files:
+        print("Belum ada event tercatat di kalender.")
+        return []
+
+    events = []
+    for fname in sorted(files):
+        fpath = os.path.join(CALENDAR_DIR, fname)
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            summary = re.search(r"^SUMMARY:(.+)$", content, re.M)
+            dtstart = re.search(r"^DTSTART(?:;[^:]+)?:(.+)$", content, re.M)
+            loc = re.search(r"^LOCATION:(.+)$", content, re.M)
+            uid = re.search(r"^UID:(.+)$", content, re.M)
+            
+            s_text = summary.group(1).strip() if summary else "Untitled"
+            d_text = dtstart.group(1).strip() if dtstart else "Unknown"
+            l_text = loc.group(1).strip() if loc else ""
+            u_text = uid.group(1).strip() if uid else fname
+            
+            events.append({
+                "file": fname,
+                "summary": s_text,
+                "start": d_text,
+                "location": l_text,
+                "uid": u_text
+            })
+        except Exception:
+            continue
+
+    print(f"Total event di {CALENDAR_DIR}: {len(events)}")
+    print("-" * 70)
+    for idx, ev in enumerate(events, 1):
+        loc_str = f" @ {ev["location"]}" if ev["location"] else ""
+        print(f"[{idx}] {ev["start"]} - {ev["summary"]}{loc_str} (file: {ev["file"]})")
+    print("-" * 70)
+    return events
+
+def delete_event(pattern):
+    ensure_calendar_dir()
+    files = [f for f in os.listdir(CALENDAR_DIR) if f.endswith(".ics")]
+    deleted = 0
+    for fname in files:
+        fpath = os.path.join(CALENDAR_DIR, fname)
+        with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        if pattern.lower() in fname.lower() or pattern.lower() in content.lower():
+            os.remove(fpath)
+            print(f"Dihapus: {fname}")
+            deleted += 1
+
+    if deleted == 0:
+        print(f"Tidak ditemukan event yang cocok dengan: {pattern}")
+    else:
+        print(f"Total {deleted} event berhasil dihapus.")
+
+def run_zenity_gui():
+    today = datetime.date.today().isoformat()
+    # Zenity forms dialog
+    cmd = [
+        "zenity", "--forms",
+        "--title=Tambah Event / Tanda Kalender Noctalia",
+        "--text=Masukkan detail agenda atau penanda tanggal:",
+        "--add-entry=Judul Event / Agenda",
+        f"--add-entry=Tanggal (YYYY-MM-DD) [default: {today}]",
+        "--add-entry=Waktu Mulai (HH:MM atau all-day)",
+        "--add-entry=Durasi (menit, default 60)",
+        "--add-entry=Lokasi (opsional)",
+        "--add-entry=Deskripsi / Catatan (opsional)",
+        "--separator=|"
+    ]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode != 0 or not res.stdout.strip():
+            return
+        
+        parts = res.stdout.strip().split("|")
+        summary = parts[0].strip() if len(parts) > 0 else ""
+        date_str = parts[1].strip() if len(parts) > 1 and parts[1].strip() else today
+        time_str = parts[2].strip() if len(parts) > 2 and parts[2].strip() else "09:00"
+        dur_str = parts[3].strip() if len(parts) > 3 and parts[3].strip() else "60"
+        location = parts[4].strip() if len(parts) > 4 else ""
+        desc = parts[5].strip() if len(parts) > 5 else ""
+
+        if not summary:
+            subprocess.run(["zenity", "--error", "--text=Judul event tidak boleh kosong!"])
+            return
+
+        try:
+            dur = int(dur_str)
+        except ValueError:
+            dur = 60
+
+        fpath, uid = create_event(summary, date_str, time_str, dur, desc, location)
+        
+        # Notify
+        notify_body = f"{date_str} {time_str} - {summary}"
+        subprocess.run(["notify-send", "-a", "Noctalia Calendar", "Event Ditambahkan", notify_body])
+    except Exception as e:
+        subprocess.run(["zenity", "--error", f"--text=Terjadi error: {e}"])
+
+def main():
+    parser = argparse.ArgumentParser(description="Noctalia Calendar Event Manager")
+    parser.add_argument("summary", nargs="?", help="Judul atau ringkasan event")
+    parser.add_argument("date", nargs="?", help="Tanggal event (YYYY-MM-DD)")
+    parser.add_argument("time", nargs="?", default="09:00", help="Waktu mulai (HH:MM atau all-day)")
+    parser.add_argument("--duration", "-dur", type=int, default=60, help="Durasi dalam menit (default 60)")
+    parser.add_argument("--description", "-desc", default="", help="Deskripsi event")
+    parser.add_argument("--location", "-loc", default="", help="Lokasi event")
+    parser.add_argument("--list", "-l", action="store_true", help="Daftar seluruh event aktif")
+    parser.add_argument("--delete", "-d", help="Hapus event berdasarkan nama atau ID")
+    parser.add_argument("--gui", "-g", action="store_true", help="Buka antarmuka dialog GUI")
+
+    args = parser.parse_args()
+
+    if args.list:
+        list_events()
+        return
+
+    if args.delete:
+        delete_event(args.delete)
+        return
+
+    # If no args or --gui, launch GUI
+    if args.gui or (not args.summary and os.environ.get("WAYLAND_DISPLAY")):
+        run_zenity_gui()
+        return
+
+    if not args.summary or not args.date:
+        parser.print_help()
+        sys.exit(1)
+
+    try:
+        fpath, uid = create_event(args.summary, args.date, args.time, args.duration, args.description, args.location)
+        print(f"Event berhasil dibuat: {fpath}")
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

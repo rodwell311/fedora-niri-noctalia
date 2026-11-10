@@ -140,3 +140,12 @@ scroll_down = "volume-down"
 
 [dock]
 enabled = false
+
+[calendar]
+enabled = true
+
+[calendar.account.personal]
+type = "vdir"
+name = "Personal"
+color = "#ffb4ab"
+path = "/home/rodwell/.local/share/calendars/personal"
