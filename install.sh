@@ -195,6 +195,9 @@ fetch_file ".config/gtk-3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 fetch_file ".config/gtk-4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
 fetch_file ".config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf" "$HOME/.config/pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf"
 fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/settings.toml"
+for f in panel.luau plugin.toml notes.luau launcher.luau dirs.luau; do
+    fetch_file ".local/state/noctalia/plugins/materialized/official/notes/$f" "$HOME/.local/state/noctalia/plugins/materialized/official/notes/$f" || true
+done
 fetch_file ".config/niri/noctalia.kdl" "$HOME/.config/niri/noctalia.kdl"
 fetch_file ".config/alacritty/themes/noctalia.toml" "$HOME/.config/alacritty/themes/noctalia.toml"
 fetch_file ".config/btop/btop.conf" "$HOME/.config/btop/btop.conf"
