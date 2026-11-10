@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-$(ls "$XDG_RUNTIME_DIR"/wayland-* 2>/dev/null | head -1 | xargs -n1 basename 2>/dev/null)}"
+exec noctalia msg panel-toggle noctalia/notes:panel

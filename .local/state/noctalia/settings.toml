@@ -162,6 +162,9 @@ widget_order = [
         format = "{:%A, %d %B}"
         shadow = true
 
+[plugins]
+enabled = [ "noctalia/notes" ]
+
 [shell]
 avatar_path = "/home/rodwell/Pictures/walls/hiyuk_profile2.jpg"
 

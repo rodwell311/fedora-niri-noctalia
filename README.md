@@ -117,6 +117,7 @@ chmod +x install.sh
 | `Mod + E` | Buka File Manager GUI (**Nautilus**) |
 | `Mod + Space` | Buka Application Launcher (**Noctalia**) |
 | `Mod + V` | Buka Clipboard Manager History (**Noctalia**) |
+| `Mod + N` | Buka Drawer Catatan / Notepad (**Noctalia Notes**) |
 | `Mod + Escape` | Buka Power & Session Menu (**Noctalia**) |
 | `Mod + Shift + C` | Tambah Event / Agenda Kalender (GUI Form) |
 | `Mod + Shift + Return` | Buka Wallpaper Picker (**Noctalia**) |

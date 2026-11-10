@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Notepad
+Comment=Quick text notes and scratchpad in Noctalia
+Exec=/home/rodwell/.local/bin/noctalia-notes
+Icon=x-office-document
+Terminal=false
+Type=Application
+Categories=Office;Utility;
+Keywords=note;notes;notepad;scratchpad;noctalia;memo;catatan;
