@@ -131,6 +131,7 @@ window-rule {
 }
 
 window-rule {
+    match app-id="zenity"
     match app-id="pavucontrol"
     match app-id="blueman-manager"
     match app-id="org.gnome.FileRoller"

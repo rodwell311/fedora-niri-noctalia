@@ -154,17 +154,18 @@ def delete_event(pattern):
 
 def run_zenity_gui():
     today = datetime.date.today().isoformat()
-    # Zenity forms dialog
     cmd = [
         "zenity", "--forms",
         "--title=Tambah Event / Tanda Kalender Noctalia",
         "--text=Masukkan detail agenda atau penanda tanggal:",
-        "--add-entry=Judul Event / Agenda",
-        f"--add-entry=Tanggal (YYYY-MM-DD) [default: {today}]",
-        "--add-entry=Waktu Mulai (HH:MM atau all-day)",
+        "--width=600",
+        "--height=430",
+        "--add-entry=Judul Agenda / Event",
+        f"--add-entry=Tanggal (YYYY-MM-DD, kosong = hari ini)",
+        "--add-entry=Waktu (HH:MM atau all-day, kosong = 09:00)",
         "--add-entry=Durasi (menit, default 60)",
         "--add-entry=Lokasi (opsional)",
-        "--add-entry=Deskripsi / Catatan (opsional)",
+        "--add-entry=Catatan / Deskripsi (opsional)",
         "--separator=|"
     ]
     try:
