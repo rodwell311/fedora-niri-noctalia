@@ -198,6 +198,10 @@ fetch_file ".local/state/noctalia/settings.toml" "$HOME/.local/state/noctalia/se
 for f in panel.luau plugin.toml notes.luau launcher.luau dirs.luau; do
     fetch_file ".local/state/noctalia/plugins/materialized/official/notes/$f" "$HOME/.local/state/noctalia/plugins/materialized/official/notes/$f" || true
 done
+mkdir -p "$HOME/.local/share/noctalia/plugins/calendar"
+fetch_file ".local/share/noctalia/plugins/catalog.toml" "$HOME/.local/share/noctalia/plugins/catalog.toml"
+fetch_file ".local/share/noctalia/plugins/calendar/plugin.toml" "$HOME/.local/share/noctalia/plugins/calendar/plugin.toml"
+fetch_file ".local/share/noctalia/plugins/calendar/launcher.luau" "$HOME/.local/share/noctalia/plugins/calendar/launcher.luau"
 fetch_file ".config/niri/noctalia.kdl" "$HOME/.config/niri/noctalia.kdl"
 fetch_file ".config/alacritty/themes/noctalia.toml" "$HOME/.config/alacritty/themes/noctalia.toml"
 fetch_file ".config/btop/btop.conf" "$HOME/.config/btop/btop.conf"

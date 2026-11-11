@@ -1,0 +1,17 @@
+id = "rodwell/calendar"
+name = "Calendar"
+version = "1.0.0"
+plugin_api = 26
+author = "rodwell"
+license = "MIT"
+dependencies = []
+tags = ["productivity"]
+icon = "calendar"
+description = "Quick event creator and date marker for Noctalia calendar."
+
+[[launcher_provider]]
+id = "launcher"
+entry = "launcher.luau"
+prefix = "cal"
+glyph = "calendar"
+include_in_global_search = true
