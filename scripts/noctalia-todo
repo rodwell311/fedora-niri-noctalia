@@ -1,0 +1,295 @@
+#!/usr/bin/env python3
+"""
+noctalia-todo: Task and Habit Manager for Noctalia Desktop & Launcher.
+Supports 3 categories:
+  1. once: Sekali melakukan
+  2. deadline: Sampai tanggal berapa (Due date)
+  3. duration: Dilakukan berapa hari (Target/Habit tracker)
+"""
+
+import sys
+import os
+import json
+import uuid
+import datetime
+import argparse
+import subprocess
+import re
+
+TODO_FILE = os.path.expanduser("~/.local/share/noctalia/todos.json")
+
+def load_todos():
+    if not os.path.exists(TODO_FILE):
+        return []
+    try:
+        with open(TODO_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+def save_todos(todos):
+    os.makedirs(os.path.dirname(TODO_FILE), exist_ok=True)
+    temp_file = TODO_FILE + ".tmp"
+    with open(temp_file, "w", encoding="utf-8") as f:
+        json.dump(todos, f, indent=2, ensure_ascii=False)
+    os.replace(temp_file, TODO_FILE)
+
+def add_task(title, category="once", due_date=None, target_days=None):
+    title = title.strip()
+    if not title:
+        raise ValueError("Judul tugas tidak boleh kosong.")
+
+    today_str = datetime.date.today().isoformat()
+    task_id = str(uuid.uuid4())[:8]
+
+    # Normalize category
+    cat = category.lower().strip()
+    if cat in ["sekali", "once", "single", "1"]:
+        cat = "once"
+    elif cat in ["deadline", "sampai", "due", "2"]:
+        cat = "deadline"
+    elif cat in ["duration", "hari", "target", "habit", "3"]:
+        cat = "duration"
+    else:
+        cat = "once"
+
+    task = {
+        "id": task_id,
+        "title": title,
+        "category": cat,
+        "created_at": today_str,
+        "completed": False,
+        "completed_at": None
+    }
+
+    if cat == "deadline":
+        if not due_date:
+            # Default 7 days from now
+            due_date = (datetime.date.today() + datetime.timedelta(days=7)).isoformat()
+        else:
+            # Validate ISO date
+            try:
+                datetime.date.fromisoformat(due_date.strip())
+                due_date = due_date.strip()
+            except ValueError:
+                raise ValueError(f"Format tanggal tidak valid: {due_date}. Gunakan YYYY-MM-DD.")
+        task["due_date"] = due_date
+
+    elif cat == "duration":
+        try:
+            days = int(target_days) if target_days else 7
+            if days <= 0:
+                days = 7
+        except (ValueError, TypeError):
+            days = 7
+        task["target_days"] = days
+        task["progress_days"] = 0
+        task["last_checkin"] = None
+
+    todos = load_todos()
+    todos.insert(0, task)
+    save_todos(todos)
+    return task
+
+def check_task(task_id):
+    todos = load_todos()
+    target = None
+    for t in todos:
+        if t["id"] == task_id or task_id.lower() in t["title"].lower():
+            target = t
+            break
+
+    if not target:
+        raise ValueError(f"Tugas tidak ditemukan: {task_id}")
+
+    today_str = datetime.date.today().isoformat()
+    msg = ""
+
+    if target["category"] in ["once", "deadline"]:
+        target["completed"] = not target["completed"]
+        target["completed_at"] = today_str if target["completed"] else None
+        status_text = "Selesai" if target["completed"] else "Belum selesai"
+        msg = f"Tugas {target['title']} ditandai: {status_text}."
+    elif target["category"] == "duration":
+        if target["completed"]:
+            # Reopen
+            target["completed"] = False
+            target["completed_at"] = None
+            msg = f"Tugas target {target['title']} dibuka kembali (Progress: {target['progress_days']}/{target['target_days']} hari)."
+        else:
+            if target.get("last_checkin") == today_str:
+                msg = f"Hari ini sudah check-in untuk {target['title']}! Progress: {target['progress_days']}/{target['target_days']} hari."
+            else:
+                target["progress_days"] = target.get("progress_days", 0) + 1
+                target["last_checkin"] = today_str
+                if target["progress_days"] >= target["target_days"]:
+                    target["completed"] = True
+                    target["completed_at"] = today_str
+                    msg = f"Luar biasa! Target {target['target_days']} hari untuk {target['title']} telah TERCAPAI!"
+                else:
+                    msg = f"Check-in berhasil! {target['title']} hari ke-{target['progress_days']} dari {target['target_days']} hari."
+
+    save_todos(todos)
+    return target, msg
+
+def delete_task(task_id):
+    todos = load_todos()
+    initial_len = len(todos)
+    todos = [t for t in todos if t["id"] != task_id and task_id.lower() not in t["title"].lower()]
+    deleted_count = initial_len - len(todos)
+    if deleted_count > 0:
+        save_todos(todos)
+        return f"{deleted_count} tugas berhasil dihapus."
+    return "Tidak ada tugas yang cocok untuk dihapus."
+
+def clear_completed():
+    todos = load_todos()
+    initial_len = len(todos)
+    todos = [t for t in todos if not t.get("completed", False)]
+    deleted_count = initial_len - len(todos)
+    if deleted_count > 0:
+        save_todos(todos)
+        return f"{deleted_count} tugas selesai berhasil dibersihkan."
+    return "Tidak ada tugas selesai yang perlu dibersihkan."
+
+def run_zenity_gui():
+    today = datetime.date.today().isoformat()
+    default_deadline = (datetime.date.today() + datetime.timedelta(days=7)).isoformat()
+    cmd = [
+        "zenity", "--forms",
+        "--title=Tambah To-Do List Noctalia",
+        "--text=Masukkan detail tugas dan pilih kategori:",
+        "--width=600",
+        "--height=450",
+        "--add-entry=Judul Tugas",
+        "--add-combo=Kategori Tugas",
+        "--combo-values=1. Sekali Melakukan|2. Sampai Tanggal (Deadline)|3. Dilakukan Berapa Hari (Target Hari)",
+        f"--add-entry=Target Tanggal Deadline (YYYY-MM-DD) [default: {default_deadline}]",
+        "--add-entry=Jumlah Target Hari (Angka, contoh: 7, 14, 30)",
+        "--separator=|"
+    ]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode != 0 or not res.stdout.strip():
+            return
+        
+        parts = res.stdout.strip().split("|")
+        title = parts[0].strip() if len(parts) > 0 else ""
+        cat_raw = parts[1].strip() if len(parts) > 1 else ""
+        due_date = parts[2].strip() if len(parts) > 2 and parts[2].strip() else default_deadline
+        target_days = parts[3].strip() if len(parts) > 3 and parts[3].strip() else "7"
+
+        if not title:
+            subprocess.run(["zenity", "--error", "--text=Judul tugas tidak boleh kosong!"])
+            return
+
+        cat = "once"
+        if "Deadline" in cat_raw:
+            cat = "deadline"
+        elif "Target" in cat_raw or "Hari" in cat_raw:
+            cat = "duration"
+
+        task = add_task(title, category=cat, due_date=due_date, target_days=target_days)
+        
+        info = f"Kategori: {task['category'].capitalize()}"
+        if task['category'] == deadline:
+            info += f" · Deadline: {task['due_date']}"
+        elif task['category'] == duration:
+            info += f" · Target: {task['target_days']} hari"
+
+        subprocess.run(["notify-send", "-a", "Noctalia To-Do", "Tugas Ditambahkan", f"{task['title']}\n{info}"])
+    except Exception as e:
+        subprocess.run(["zenity", "--error", f"--text=Terjadi error: {e}"])
+
+def main():
+    parser = argparse.ArgumentParser(description="Noctalia To-Do List Manager")
+    parser.add_argument("title", nargs="?", help="Judul tugas")
+    parser.add_argument("--type", "-t", choices=["once", "deadline", "duration"], default="once", help="Kategori tugas")
+    parser.add_argument("--due", "-d", help="Batas tanggal (YYYY-MM-DD)")
+    parser.add_argument("--days", "-n", type=int, help="Jumlah target hari")
+    parser.add_argument("--check", "-c", help="Centang/toggle tugas berdasarkan ID atau judul")
+    parser.add_argument("--delete", "--del", help="Hapus tugas berdasarkan ID atau judul")
+    parser.add_argument("--clear-completed", action="store_true", help="Hapus semua tugas yang telah selesai")
+    parser.add_argument("--list", "-l", action="store_true", help="Tampilkan daftar tugas")
+    parser.add_argument("--json", "-j", action="store_true", help="Output daftar tugas dalam format JSON mentah")
+    parser.add_argument("--gui", "-g", action="store_true", help="Buka dialog formulir GUI")
+
+    args = parser.parse_args()
+
+    if args.json:
+        print(json.dumps(load_todos(), ensure_ascii=False))
+        return
+
+    if args.list:
+        todos = load_todos()
+        if not todos:
+            print("Belum ada tugas di To-Do list.")
+            return
+        today = datetime.date.today()
+        print(f"Total tugas: {len(todos)}")
+        print("-" * 75)
+        for idx, t in enumerate(todos, 1):
+            check_box = "[✓]" if t.get("completed") else "[ ]"
+            cat = t.get("category", "once")
+            cat_info = ""
+            if cat == "deadline":
+                due = t.get("due_date", "")
+                try:
+                    delta = (datetime.date.fromisoformat(due) - today).days
+                    if delta > 0:
+                        cat_info = f" (Deadline: {due}, sisa {delta} hari)"
+                    elif delta == 0:
+                        cat_info = f" (Deadline: HARI INI!)"
+                    else:
+                        cat_info = f" (Deadline: TERLEWAT {-delta} hari!)"
+                except Exception:
+                    cat_info = f" (Deadline: {due})"
+            elif cat == "duration":
+                cur = t.get("progress_days", 0)
+                tot = t.get("target_days", 7)
+                last = t.get("last_checkin", "belum")
+                cat_info = f" (Progress: {cur}/{tot} hari, terakhir: {last})"
+            else:
+                cat_info = " (Sekali)"
+
+            print(f"[{t["id"]}] {check_box} {t["title"]}{cat_info}")
+        print("-" * 75)
+        return
+
+    if args.check:
+        try:
+            _, msg = check_task(args.check)
+            print(msg)
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+        return
+
+    if args.delete:
+        msg = delete_task(args.delete)
+        print(msg)
+        return
+
+    if args.clear_completed:
+        msg = clear_completed()
+        print(msg)
+        return
+
+    if args.gui or (not args.title and os.environ.get("WAYLAND_DISPLAY")):
+        run_zenity_gui()
+        return
+
+    if not args.title:
+        parser.print_help()
+        sys.exit(1)
+
+    try:
+        t = add_task(args.title, category=args.type, due_date=args.due, target_days=args.days)
+        print(f"Tugas berhasil ditambahkan [{t['id']}]: {t['title']} ({t['category']})")
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

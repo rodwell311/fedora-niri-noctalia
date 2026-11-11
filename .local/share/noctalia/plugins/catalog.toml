@@ -10,3 +10,16 @@ icon = "calendar"
 description = "Quick event creator and date marker for Noctalia calendar."
 plugin_api = 26
 tags = ["productivity"]
+
+[[plugin]]
+id = "rodwell/todo"
+name = "To-Do"
+version = "1.0.0"
+updated_at = 1792983685
+added_at = 1781039692
+author = "rodwell"
+license = "MIT"
+icon = "checkbox"
+description = "Smart To-Do List manager with one-time, deadline, and multi-day duration tracking."
+plugin_api = 26
+tags = ["productivity"]

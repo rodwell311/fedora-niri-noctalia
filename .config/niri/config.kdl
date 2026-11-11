@@ -217,6 +217,7 @@ binds {
     Mod+S hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
     Mod+Shift+S hotkey-overlay-title="Settings" { spawn-sh "noctalia msg settings-toggle"; }
     Mod+Shift+C hotkey-overlay-title="Calendar: Add Event" { spawn-sh "noctalia-calendar-event --gui"; }
+    Mod+Shift+T hotkey-overlay-title="To-Do List: Tasks & Habits" { spawn "noctalia" "msg" "panel-open" "launcher" "/todo "; }
     Mod+Ctrl+Return hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+Space hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn-sh "noctalia msg session lock"; }

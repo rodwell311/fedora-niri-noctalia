@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=To-Do List
+Comment=Kelola tugas sekali selesai, deadline, dan target hari
+Exec=/home/rodwell/.local/bin/noctalia-todo --gui
+Icon=checkbox
+Terminal=false
+Type=Application
+Categories=Office;Utility;
+Keywords=todo;task;checklist;deadline;habit;noctalia;tugas;

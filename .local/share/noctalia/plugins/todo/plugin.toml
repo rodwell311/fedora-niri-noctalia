@@ -1,0 +1,17 @@
+id = "rodwell/todo"
+name = "To-Do"
+version = "1.0.0"
+plugin_api = 26
+author = "rodwell"
+license = "MIT"
+dependencies = []
+tags = ["productivity"]
+icon = "checkbox"
+description = "Smart To-Do List manager for Noctalia Launcher."
+
+[[launcher_provider]]
+id = "launcher"
+entry = "launcher.luau"
+prefix = "todo"
+glyph = "checkbox"
+include_in_global_search = true

@@ -81,7 +81,7 @@ Repo ini adalah backup lengkap. Setelah reinstall Fedora, jalankan `install.sh` 
 │   ├── systemd/user/               # swayidle, media-idle-guard, battery-alert
 │   └── starship.toml               # Prompt Starship (palet noctalia)
 ├── .local/state/noctalia/settings.toml  # Dock, widget lockscreen, wallpaper, tema
-├── scripts/                        # battery-alert, media-idle-guard, ocr-snip, reset-mic-state, noctalia-calendar-event
+├── scripts/                        # battery-alert, media-idle-guard, ocr-snip, reset-mic-state, noctalia-calendar-event, noctalia-todo
 ├── .zshrc                          # Zsh, alias, plugin, fastfetch saat login
 ├── install.sh                      # Installer otomatis satu perintah
 └── README.md
@@ -120,6 +120,7 @@ chmod +x install.sh
 | `Mod + N` | Buka Drawer Catatan / Notepad (**Noctalia Notes**) |
 | `Mod + Escape` | Buka Power & Session Menu (**Noctalia**) |
 | `Mod + Shift + C` | Tambah Event / Agenda Kalender (GUI Form) |
+| `Mod + Shift + T` | Buka To-Do List & Habit Tracker (Launcher `/todo`) |
 | `Mod + Shift + Return` | Buka Wallpaper Picker (**Noctalia**) |
 | `Mod + Shift + X` | OCR Screenshot: Salin teks dari layar ke clipboard |
 | `Mod + Shift + I` | Toggle Mode Manual Idle / Sleep Inhibit (Stay Awake) |
