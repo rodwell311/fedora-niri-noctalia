@@ -173,3 +173,10 @@ enabled = true
 kind = "path"
 location = "/home/rodwell/.local/share/noctalia/plugins"
 name = "local"
+
+# ==============================================================================
+# OSD POPUPS (Suppress intrusive random mic popups)
+# ==============================================================================
+[osd.kinds]
+volume_input = false
+privacy      = false
