@@ -122,12 +122,18 @@ window-rule {
     }
 }
 
+// Default new windows to full-width columns, not fullscreen.
+window-rule {
+    open-maximized true
+}
+
 // Floating rules for Noctalia & Steam & dialogs
 window-rule {
     match app-id="dev.noctalia.Noctalia"
     open-floating true
     default-column-width { fixed 1000; }
     default-window-height { fixed 660; }
+    open-maximized false
 }
 
 window-rule {
@@ -144,12 +150,14 @@ window-rule {
     open-floating true
     default-column-width { fixed 860; }
     default-window-height { fixed 560; }
+    open-maximized false
 }
 
 window-rule {
     match app-id="steam"
     exclude title=r#"^[Ss]team$"#
     open-floating true
+    open-maximized false
 }
 
 // Layer Shell Rules
@@ -340,4 +348,5 @@ window-rule {
     open-floating true
     default-column-width { proportion 0.666667; }
     default-window-height { proportion 0.666667; }
+    open-maximized false
 }
