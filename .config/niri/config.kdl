@@ -33,6 +33,7 @@ input {
     }
     touchpad {
         tap
+        dwt
         natural-scroll
     }
     mouse {
@@ -131,9 +132,9 @@ window-rule {
 window-rule {
     match app-id="dev.noctalia.Noctalia"
     open-floating true
+    open-fullscreen false
     default-column-width { fixed 1000; }
     default-window-height { fixed 660; }
-    open-maximized false
 }
 
 window-rule {
@@ -148,16 +149,16 @@ window-rule {
     match title="Open Folder"
     match title="Choose Files"
     open-floating true
+    open-fullscreen false
     default-column-width { fixed 860; }
     default-window-height { fixed 560; }
-    open-maximized false
 }
 
 window-rule {
     match app-id="steam"
     exclude title=r#"^[Ss]team$"#
     open-floating true
-    open-maximized false
+    open-fullscreen false
 }
 
 // Layer Shell Rules
@@ -215,7 +216,7 @@ binds {
     // Applications
     Mod+Shift+K hotkey-overlay-title="Keybind Editor" { spawn-sh "niri-keybind-editor"; }
     Mod+Return hotkey-overlay-title="Open Terminal: Alacritty" { spawn "alacritty"; }
-    Mod+B hotkey-overlay-title="Open Browser: Brave Origin" { spawn "brave-origin"; }
+    Mod+B hotkey-overlay-title="Open Browser: Brave Origin" { spawn "firefox"; }
     Mod+E hotkey-overlay-title="File Manager: Nautilus" { spawn "nautilus"; }
 
     // Noctalia Integration
@@ -342,11 +343,11 @@ binds {
 
 include "noctalia.kdl"
 
-// Keybinds launcher: floating window at two-thirds of the focused output
+// Keybinds launcher: floating window at 60% of the focused output
 window-rule {
     match title="Keybinds"
     open-floating true
+    open-fullscreen false
     default-column-width { proportion 0.666667; }
     default-window-height { proportion 0.666667; }
-    open-maximized false
 }
