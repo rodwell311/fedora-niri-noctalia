@@ -1,9 +1,10 @@
 --!nonstrict
 -- Markdown notes in a full-height side panel.
 --
--- Notes are plain .md files in the configured notes directory. The panel shows
--- a note list and a multiline editor with idle autosave (flushes after a short
--- pause in typing, on navigation, and on panel close).
+-- Notes are plain text files (.md by default) in the configured notes
+-- directory. The panel shows a note list and a multiline editor with idle
+-- autosave (flushes after a short pause in typing, on navigation, and on panel
+-- close).
 
 local AUTOSAVE_IDLE_TICKS = 2 -- 1s panel ticks with no edits before a flush
 local SCRATCHPAD_BASE = "scratchpad"
@@ -11,7 +12,8 @@ local SCRATCHPAD_BASE = "scratchpad"
 local dirs = require("./dirs.luau")
 
 local notesDir = ""
-local suffix = ".md" -- "." .. the configured extension, resolved in onOpen
+local suffixes = { ".md" } -- "." .. each configured extension, resolved in onOpen
+local defaultSuffix = ".md"
 local files = {}
 local view = "list" -- "list" | "editor"
 local current = nil -- filename ("foo.md") while the editor is open
@@ -33,12 +35,23 @@ local function tr(key)
   return noctalia.tr(key)
 end
 
+-- The configured suffix `file` ends with, or nil when it matches none.
+local function matchSuffix(file)
+  for _, s in ipairs(suffixes) do
+    if #file > #s and file:sub(-#s) == s then
+      return s
+    end
+  end
+  return nil
+end
+
 local function displayName(file)
-  return file:sub(1, #file - #suffix)
+  local s = matchSuffix(file)
+  return s ~= nil and file:sub(1, #file - #s) or file
 end
 
 local function hasSuffix(name)
-  return #name > #suffix and name:sub(-#suffix) == suffix
+  return matchSuffix(name) ~= nil
 end
 
 local function notePath(file)
@@ -46,7 +59,7 @@ local function notePath(file)
 end
 
 local function scratchName()
-  return SCRATCHPAD_BASE .. suffix
+  return SCRATCHPAD_BASE .. defaultSuffix
 end
 
 -- Pins live in a hidden sidecar inside the notes directory so they sync and
@@ -138,35 +151,102 @@ local function openNote(file)
   render()
 end
 
+local function resetEditor()
+  view = "list"
+  current = nil
+  buffer = ""
+  dirty = false
+  pendingDelete = nil
+end
+
+-- Saves pending edits and returns to the note list.
+local function showList()
+  flush()
+  resetEditor()
+  refreshFiles()
+  render()
+end
+
 local function deleteNote(file)
-  local ok, err = noctalia.removeFile(notePath(file))
-  if not ok then
-    noctalia.notifyError(tr("title"), err or "")
+  -- A draft opened via `note:<name>` has no file until its first save.
+  if noctalia.fileExists(notePath(file)) then
+    local ok, err = noctalia.removeFile(notePath(file))
+    if not ok then
+      noctalia.notifyError(tr("title"), err or "")
+    end
   end
   if pins[file] ~= nil then
     pins[file] = nil
     savePins()
   end
   if current == file then
-    current = nil
-    buffer = ""
-    dirty = false
-    view = "list"
+    resetEditor()
+  else
+    pendingDelete = nil
   end
-  pendingDelete = nil
   refreshFiles()
   render()
 end
 
 local function uniqueNoteName()
   local base = noctalia.formatTime("%Y-%m-%d %H.%M.%S")
-  local name = base .. suffix
+  local name = base .. defaultSuffix
   local counter = 2
   while noctalia.fileExists(notePath(name)) do
-    name = base .. " (" .. counter .. ")" .. suffix
+    name = base .. " (" .. counter .. ")" .. defaultSuffix
     counter += 1
   end
   return name
+end
+
+local function findNote(name)
+  for _, file in ipairs(files) do
+    if file == name or displayName(file) == name then
+      return file
+    end
+  end
+  return nil
+end
+
+-- Resolves a `note:<name>` context. A name that matches no file opens an
+-- empty editor under that name instead; the first edit creates the file.
+local function noteFromContext(name)
+  -- Leading dots would create a hidden file that the note list never shows.
+  name = noctalia.string.trim(name):gsub("/", ""):gsub("^%.+", "")
+  if name == "" then
+    return nil
+  end
+  return findNote(name) or (hasSuffix(name) and name or name .. defaultSuffix)
+end
+
+-- Explicit panel context, e.g. `panel-toggle noctalia/notes:panel scratchpad`.
+local function applyContext(context)
+  local target = noctalia.string.trim(context or "")
+  if target == "home" or target == "list" then
+    showList()
+    return
+  end
+  if target == "scratchpad" then
+    openNote(scratchName())
+    return
+  end
+  local name = target:match("^note:(.+)$")
+  if name ~= nil then
+    local file = noteFromContext(name)
+    if file ~= nil then
+      openNote(file)
+    else
+      render()
+    end
+    return
+  end
+  local file = findNote(target)
+  if file ~= nil then
+    openNote(file)
+    return
+  end
+  -- Unknown context: fall back to the note list
+  showList()
 end
 
 local function deleteControls(file)
@@ -377,22 +457,26 @@ render = function()
   }))
 end
 
-function onOpen(_context)
+function onOpen(context)
   notesDir = dirs.resolveNotesDir()
   cornerRadiusScale = noctalia.getSetting("shell.corner_radius_scale")
   closeButton = noctalia.getSetting("shell.show_close_buttons") ~= false
-  local extension = noctalia.string.trim(noctalia.getConfig("extension")):gsub("^%.", "")
-  if extension == "" then
-    noctalia.notifyError(tr("title"), tr("bad_extension"))
-    extension = "md"
+  local rawExt = noctalia.string.trim(noctalia.getConfig("extension"))
+  suffixes = {}
+  for ext in rawExt:gmatch("[^,%s]+") do
+    local clean = ext:gsub("^%.", "")
+    if clean ~= "" then
+      table.insert(suffixes, "." .. clean)
+    end
   end
-  suffix = "." .. extension
+  if #suffixes == 0 then
+    noctalia.notifyError(tr("title"), tr("bad_extension"))
+    suffixes = { ".md" }
+  end
+  defaultSuffix = suffixes[1]
   -- A note left open under a different extension setting no longer matches.
   if current ~= nil and not hasSuffix(current) then
-    current = nil
-    buffer = ""
-    dirty = false
-    view = "list"
+    resetEditor()
   end
   local ok, err = noctalia.mkdirAll(notesDir)
   if not ok then
@@ -402,16 +486,18 @@ function onOpen(_context)
   refreshFiles()
   pendingDelete = nil
   panel.setWantsSecondTicks(true)
+  -- An explicit IPC context wins over the launcher handoff below.
+  if noctalia.string.trim(context or "") ~= "" then
+    noctalia.state.set("open_home", false)
+    noctalia.state.set("open_note", "")
+    applyContext(context)
+    return
+  end
   -- The launcher entry hands over a target through the shared state: either
   -- the note list ("open_home") or a specific note ("open_note").
   if noctalia.state.get("open_home") == true then
     noctalia.state.set("open_home", false)
-    flush()
-    view = "list"
-    current = nil
-    buffer = ""
-    dirty = false
-    render()
+    showList()
     return
   end
   local target = noctalia.state.get("open_note")
@@ -483,18 +569,21 @@ function onRename(value)
     render()
     return
   end
-  local target = name .. suffix
+  local target = name .. (matchSuffix(current) or defaultSuffix)
   if noctalia.fileExists(notePath(target)) then
     noctalia.notifyError(tr("title"), tr("rename_exists"))
     render()
     return
   end
   flush()
-  local ok, err = noctalia.renameFile(notePath(current), notePath(target))
-  if not ok then
-    noctalia.notifyError(tr("title"), err or "")
-    render()
-    return
+  -- An unsaved draft (no file yet) is renamed in place; the first save creates it.
+  if noctalia.fileExists(notePath(current)) then
+    local ok, err = noctalia.renameFile(notePath(current), notePath(target))
+    if not ok then
+      noctalia.notifyError(tr("title"), err or "")
+      render()
+      return
+    end
   end
   if pins[current] ~= nil then
     pins[current] = nil
@@ -512,13 +601,7 @@ function onEditorDelete()
 end
 
 function onBack()
-  flush()
-  view = "list"
-  current = nil
-  buffer = ""
-  pendingDelete = nil
-  refreshFiles()
-  render()
+  showList()
 end
 
 function onClosePanel()

@@ -1,0 +1,17 @@
+id = "rodwell/keybind-editor"
+name = "Keybinds"
+version = "1.0.0"
+plugin_api = 26
+author = "rodwell"
+license = "MIT"
+dependencies = []
+tags = ["system", "utility", "niri"]
+icon = "keyboard"
+description = "Search, filter, and edit Niri keyboard shortcuts."
+
+[[launcher_provider]]
+id = "launcher"
+entry = "launcher.luau"
+prefix = "keys"
+glyph = "keyboard"
+include_in_global_search = false

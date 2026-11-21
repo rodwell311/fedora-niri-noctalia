@@ -163,7 +163,7 @@ widget_order = [
         shadow = true
 
 [plugins]
-enabled = [ "noctalia/notes" ]
+enabled = [ "noctalia/notes", "rodwell/calendar", "rodwell/keybind-editor" ]
 
 [shell]
 avatar_path = "/home/rodwell/Pictures/walls/hiyuk_profile2.jpg"

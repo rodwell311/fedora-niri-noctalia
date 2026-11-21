@@ -47,17 +47,35 @@ type it, press Enter, done.
 ## IPC
 
 ```sh
-noctalia msg panel-toggle noctalia/notes:panel   # toggle the panel
-noctalia msg panel-open noctalia/notes:panel     # open it
+noctalia msg panel-toggle noctalia/notes:panel   # toggle the panel, keeping its last view
+noctalia msg panel-open noctalia/notes:panel     # open it, keeping its last view
 noctalia msg panel-close                         # close the open panel
 ```
+
+`panel-open` and `panel-toggle` accept an optional context:
+
+| Context | Result |
+| --- | --- |
+| `scratchpad` | Opens the scratchpad note. |
+| `home` / `list` | Shows the note list. |
+| `note:<name>` | Opens the note called `<name>` (with or without the file extension). An unknown name starts an empty note that is created on the first edit, using the first configured extension. |
+| `<name>` | Opens the note called `<name>`, or shows the list when no note matches. |
+
+```sh
+noctalia msg panel-toggle noctalia/notes:panel scratchpad
+noctalia msg panel-toggle noctalia/notes:panel home
+noctalia msg panel-toggle noctalia/notes:panel "note:buy milk"
+```
+
+Toggling with the same context on an already open panel closes it, a different
+context switches the open panel in place.
 
 ## Settings
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
 | `notes_dir` | `folder` | `$XDG_DOCUMENTS_DIR/Notes` | Where the note files live. `$XDG_DOCUMENTS_DIR` expands to your localized Documents folder, or `~/Documents` if none is set. If that folder has no `Notes` yet but `~/Documents/Notes` (the pre-1.1.0 default) exists, the old folder keeps being used. Created on first open if missing. |
-| `extension` | `string` | `md` | Extension for note files (without the dot). Only files with this extension are listed. |
+| `extension` | `string` | `md` | Comma-separated extensions for note files, without the dot (e.g. `md, txt, org`). Only files with these extensions are listed. New notes and the scratchpad use the first one; renaming a note keeps its extension. |
 | `glyph` | `glyph` | `notes` | Bar widget icon. |
 
 ## Notes

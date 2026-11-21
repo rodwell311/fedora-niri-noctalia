@@ -205,6 +205,7 @@ binds {
     Mod+Shift+Escape { show-hotkey-overlay; }
 
     // Applications
+    Mod+Shift+K hotkey-overlay-title="Keybind Editor" { spawn-sh "niri-keybind-editor"; }
     Mod+Return hotkey-overlay-title="Open Terminal: Alacritty" { spawn "alacritty"; }
     Mod+B hotkey-overlay-title="Open Browser: Brave Origin" { spawn "brave-origin"; }
     Mod+E hotkey-overlay-title="File Manager: Nautilus" { spawn "nautilus"; }
@@ -217,7 +218,6 @@ binds {
     Mod+S hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
     Mod+Shift+S hotkey-overlay-title="Settings" { spawn-sh "noctalia msg settings-toggle"; }
     Mod+Shift+C hotkey-overlay-title="Calendar: Add Event" { spawn-sh "noctalia-calendar-event --gui"; }
-    Mod+Shift+T hotkey-overlay-title="To-Do List: Tasks & Habits" { spawn "noctalia" "msg" "panel-open" "launcher" "/todo "; }
     Mod+Ctrl+Return hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+Space hotkey-overlay-title="App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn-sh "noctalia msg session lock"; }
@@ -333,3 +333,11 @@ binds {
 
 
 include "noctalia.kdl"
+
+// Keybinds launcher: floating window at two-thirds of the focused output
+window-rule {
+    match title="Keybinds"
+    open-floating true
+    default-column-width { proportion 0.666667; }
+    default-window-height { proportion 0.666667; }
+}

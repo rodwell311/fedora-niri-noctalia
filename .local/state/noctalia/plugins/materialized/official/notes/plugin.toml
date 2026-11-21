@@ -1,6 +1,6 @@
 id = "noctalia/notes"
 name = "Notes"
-version = "1.1.0"
+version = "1.3.0"
 plugin_api = 26
 author = "noctalia"
 license = "MIT"
@@ -14,7 +14,7 @@ key = "notes_dir"
 type = "folder"
 label_key = "settings.notes_dir.label"
 description_key = "settings.notes_dir.description"
-default = "$XDG_DOCUMENTS_DIR/QuickNotes"
+default = "$XDG_DOCUMENTS_DIR/Notes"
 
 [[setting]]
 key = "extension"

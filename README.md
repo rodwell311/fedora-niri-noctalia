@@ -80,8 +80,10 @@ Repo ini adalah backup lengkap. Setelah reinstall Fedora, jalankan `install.sh` 
 │   ├── pipewire/pipewire-pulse.conf.d/50-block-source-volume.conf
 │   ├── systemd/user/               # swayidle, media-idle-guard, battery-alert
 │   └── starship.toml               # Prompt Starship (palet noctalia)
+├── .local/share/niri-keybind-editor/   # Lightweight Tk editor for Niri bindings
+├── .local/share/noctalia/plugins/keybind-editor/  # /keys launcher provider
 ├── .local/state/noctalia/settings.toml  # Dock, widget lockscreen, wallpaper, tema
-├── scripts/                        # battery-alert, media-idle-guard, ocr-snip, reset-mic-state, noctalia-calendar-event, noctalia-todo
+├── scripts/                        # battery-alert, media-idle-guard, ocr-snip, calendar, keybind editor
 ├── .zshrc                          # Zsh, alias, plugin, fastfetch saat login
 ├── install.sh                      # Installer otomatis satu perintah
 └── README.md
@@ -108,19 +110,23 @@ chmod +x install.sh
 
 ---
 
+### Niri Keybind Editor
+
+Buka dengan `Mod + Shift + K` atau ketik `/keys` pada Noctalia Launcher. Aplikasi ringan ini membaca binding Niri dan semua berkas `include`, menyediakan pencarian/filter kategori, serta mengedit shortcut. Perubahan dicadangkan, divalidasi dengan `niri validate`, lalu dimuat ulang. Editor memakai Python standard library dan Tkinter; prosesnya hanya berjalan saat diminta.
+
 ## ⌨️ Keybindings Reference
 
 | Shortcut | Action |
 | :--- | :--- |
 | `Mod + Return` | Buka Terminal (**Alacritty** + Zsh) |
-| `Mod + B` | Buka Web Browser (**Brave Origin**) |
+| `Mod + B` | Buka Web Browser (**Firefox**) |
 | `Mod + E` | Buka File Manager GUI (**Nautilus**) |
 | `Mod + Space` | Buka Application Launcher (**Noctalia**) |
 | `Mod + V` | Buka Clipboard Manager History (**Noctalia**) |
 | `Mod + N` | Buka Drawer Catatan / Notepad (**Noctalia Notes**) |
 | `Mod + Escape` | Buka Power & Session Menu (**Noctalia**) |
 | `Mod + Shift + C` | Tambah Event / Agenda Kalender (GUI Form) |
-| `Mod + Shift + T` | Buka To-Do List & Habit Tracker (Launcher `/todo`) |
+| `Mod + Shift + K` | Buka Niri Keybind Editor |
 | `Mod + Shift + Return` | Buka Wallpaper Picker (**Noctalia**) |
 | `Mod + Shift + X` | OCR Screenshot: Salin teks dari layar ke clipboard |
 | `Mod + Shift + I` | Toggle Mode Manual Idle / Sleep Inhibit (Stay Awake) |
