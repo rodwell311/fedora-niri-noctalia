@@ -1,3 +1,6 @@
 # Runtime / generated files
 *.bak.*
 backend_state.json
+
+# Local config snapshots
+.config/niri/backups/

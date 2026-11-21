@@ -258,9 +258,9 @@ binds {
     Mod+Down  { focus-window-down; }
     Mod+J     { focus-window-down; }
 
-    Mod+Ctrl+Left  { move-column-left; }
+    Ctrl+Left  { focus-column-left-or-last; }
+    Ctrl+Right { focus-column-right-or-first; }
     Mod+Ctrl+H     { move-column-left; }
-    Mod+Ctrl+Right { move-column-right; }
     Mod+Ctrl+L     { move-column-right; }
     Mod+Ctrl+Up    { move-window-up; }
     Mod+Ctrl+K     { move-window-up; }
